@@ -89,5 +89,26 @@ namespace Kraggs.Graphics.Math3D
         {
             return (float)1.0f / Sqrt(f);
         }
+
+        #region Fast Functions
+
+        public static unsafe float FastInverseSqrt(float x)
+        {
+            float tmp = x;
+            float xhalf = 0.5f * tmp;
+            int i = *(int*)&x;
+            i = 0x5f375a86 - (i >> 1);
+            tmp = *(float*)&i;
+            tmp = tmp * (1.5f - xhalf * tmp * tmp);
+
+            return tmp;
+        }
+
+        public static float FastSqrt(float x)
+        {
+            return 1.0f / FastInverseSqrt(x);
+        }
+
+        #endregion
     }
 }
