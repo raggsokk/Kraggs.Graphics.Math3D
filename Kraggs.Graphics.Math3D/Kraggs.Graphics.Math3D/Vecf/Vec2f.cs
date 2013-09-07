@@ -13,7 +13,7 @@ namespace Kraggs.Graphics.Math3D
     /// </summary>
     [DebuggerDisplay("[ {x}, {y} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vec2f
+    public partial struct Vec2f : IEquatable<Vec2f>
     {
         /// <summary>
         /// The x component.
@@ -135,6 +135,65 @@ namespace Kraggs.Graphics.Math3D
         {
             return left.x * right.x + left.y * right.y;
         }
+
+        /// <summary>
+        /// If Dot(Nref, I) < 0.0, return N otherwise return -N
+        /// </summary>
+        /// <param name="N"></param>
+        /// <param name="I"></param>
+        /// <param name="Nref"></param>
+        /// <returns></returns>
+        public static Vec2f FaceForward(Vec2f N, Vec2f I, Vec2f Nref)
+        {
+            //TODO: Use operatores instead of function madness.
+            return Dot(Nref, I) < 0 ? N : -N;
+
+            //return Dot(Nref, I) < 0.0f ? N : Negate(N);
+        }
+
+        /// <summary>
+        /// For the incident vector I and surface orientation N,
+        /// return the reflection direction: result = I - 2.0 * Dot(N, I) * N.
+        /// </summary>
+        /// <param name="I"></param>
+        /// <param name="N"></param>
+        /// <returns></returns>
+        public static Vec2f Reflect(Vec2f I, Vec2f N)
+        {
+            //TODO: Use operatores instead of function madness.
+            return I - N * Dot(N, I) * 2.0f;
+
+            //return Subtract(I, Multiply(N, Dot(N, I) * 2.0f));
+        }
+
+        /// <summary>
+        /// For the incident vector I and surface normal N,
+        /// and the ratio of indices of refraction eta,
+        /// return the refraction vector.
+        /// </summary>
+        /// <param name="I"></param>
+        /// <param name="N"></param>
+        /// <returns></returns>
+        public static Vec2f Refract(Vec2f I, Vec2f N, float eta)
+        {
+            //TODO: Use operatores instead of function madness.
+
+            float dotValue = Dot(N, I);
+            float k = 1.0f - eta * eta * (1.0f - dotValue * dotValue);
+
+            if (k < 0.0f)
+                return Vec2f.Zero;
+            else
+                return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
+            //TODO: Use operatores instead of function madness.
+            //return Multiply(Subtract(Multiply(I, eta), (eta * dotValue + MathFunctions.Sqrt(k))), N);
+
+            //return Multiply(Subtract(Multiply(I, eta),sdf), N);
+            //return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
+
+            // return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
+        }
+
 
         //[DebuggerNonUserCode()]
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -368,5 +427,310 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
+        #region Static Operator Functions
+
+        /// <summary>
+        /// Adds two vectors to each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator +(Vec2f left, Vec2f right)
+        {
+            return new Vec2f() {
+                x = left.x + right.x,
+                y = left.y + right.y
+            };
+        }
+
+        /// <summary>
+        /// Subtracts one vector from another.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator -(Vec2f left, Vec2f right)
+        {
+            return new Vec2f()
+            {
+                x = left.x - right.x,
+                y = left.y - right.y
+            };
+        }
+
+        /// <summary>
+        /// Multiplies two vectors with each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator *(Vec2f left, Vec2f right)
+        {
+            return new Vec2f()
+            {
+                x = left.x * right.x,
+                y = left.y * right.y
+            };
+        }
+
+        /// <summary>
+        /// Divides two vectores from each other component wise.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator /(Vec2f left, Vec2f right)
+        {
+            return new Vec2f()
+            {
+                x = left.x / right.x,
+                y = left.y / right.y
+            };
+        }
+        /// <summary>
+        /// Adds a scalar to a vector.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator +(Vec2f vec, float scalar)
+        {
+            return new Vec2f()
+            {
+                x = vec.x + scalar,
+                y = vec.y + scalar
+            };
+        }
+        /// <summary>
+        /// Subtracts a scalar from a vector.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator -(Vec2f vec, float scalar)
+        {
+            return new Vec2f()
+            {
+                x = vec.x - scalar,
+                y = vec.y - scalar
+            };
+        }
+
+        /// <summary>
+        /// Multiplies a vector and a scalar.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator *(Vec2f vec, float scalar)
+        {
+            return new Vec2f()
+            {
+                x = vec.x * scalar,
+                y = vec.y * scalar
+            };
+        }
+        /// <summary>
+        /// Divides a vector with a scalar.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator /(Vec2f vec, float scalar)
+        {
+            float f = 1.0f / scalar;
+
+            return new Vec2f()
+            {
+                x = vec.x * f,
+                y = vec.y * f
+            };
+        }
+        /// <summary>
+        /// Adds a scalar to a vector.
+        /// </summary>
+        /// <param name="scalar"></param>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator +(float scalar, Vec2f vec)
+        {
+            return new Vec2f()
+            {
+                x = scalar + vec.x,
+                y = scalar + vec.y
+            };
+        }
+        /// <summary>
+        /// Subtracts a vector from a scalar.
+        /// </summary>
+        /// <param name="scalar"></param>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator -(float scalar, Vec2f vec)
+        {
+            return new Vec2f()
+            {
+                x = scalar - vec.x,
+                y = scalar - vec.y
+            };
+        }
+        /// <summary>
+        /// Multiplies a scalar with a vector.
+        /// </summary>
+        /// <param name="scalar"></param>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator *(float scalar, Vec2f vec)
+        {
+            return new Vec2f()
+            {
+                x = scalar * vec.x,
+                y = scalar * vec.y
+            };
+        }
+        /// <summary>
+        /// Divies a scalar with a vector.
+        /// </summary>
+        /// <param name="scalar"></param>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator /(float scalar, Vec2f vec)
+        {
+            float f = 1.0f / scalar;
+
+            return new Vec2f()
+            {
+                x = f * vec.x,
+                y = f * vec.y
+            };
+        }
+
+        /// <summary>
+        /// Negates a vector.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f operator -(Vec2f vec)
+        {
+            return new Vec2f()
+            {
+                x = -vec.x,
+                y = -vec.y
+            };
+        }
+
+        /// <summary>
+        /// Compares two vectors with each other for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns>true if equal, false otherwise.</returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(Vec2f left, Vec2f right)
+        {
+            return
+                left.x == right.x &&
+                left.y == right.y;
+        }
+
+        /// <summary>
+        /// Compares two vectors with each other for inequality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns>true if not equal, false otherwise.</returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(Vec2f left, Vec2f right)
+        {
+            return
+                left.x != right.x ||
+                left.y != right.y;
+        }
+
+        /// <summary>
+        /// Returns unsafe float* pointer to x.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public unsafe static explicit operator float*(Vec2f vec)
+        {
+            return &vec.x;
+        }
+        /// <summary>
+        /// Returns unsafe IntPtr pointer to x.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public unsafe static explicit operator IntPtr(Vec2f vec)
+        {
+            return (IntPtr)(&vec.x);
+        }
+
+        #endregion
+
+        #region Object Overloads
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override int GetHashCode()
+        {
+            return x.GetHashCode() ^ y.GetHashCode();
+        }
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override string ToString()
+        {
+            return string.Format("[{0}, {1}]", x, y);
+        }
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override bool Equals(object obj)
+        {
+            if (obj is Vec2f)
+                return Equals((Vec2f)obj);
+            else
+                return false;
+        }
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals(Vec2f other)
+        {
+            return x == other.x && y == other.y;
+        }
+
+        #endregion
     }
 }

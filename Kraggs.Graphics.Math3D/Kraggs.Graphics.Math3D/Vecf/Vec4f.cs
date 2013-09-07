@@ -13,7 +13,7 @@ namespace Kraggs.Graphics.Math3D
     /// </summary>
     [DebuggerDisplay("[ {x}, {y}, {z}, {w} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vec4f
+    public partial struct Vec4f : IEquatable<Vec4f>
     {
         /// <summary>
         /// The x component.
@@ -243,6 +243,64 @@ namespace Kraggs.Graphics.Math3D
             };
         }
 
+        /// <summary>
+        /// If Dot(Nref, I) < 0.0, return N otherwise return -N
+        /// </summary>
+        /// <param name="N"></param>
+        /// <param name="I"></param>
+        /// <param name="Nref"></param>
+        /// <returns></returns>
+        public static Vec4f FaceForward(Vec4f N, Vec4f I, Vec4f Nref)
+        {
+            //TODO: Use operatores instead of function madness.
+            return Dot(Nref, I) < 0 ? N : -N;
+
+            //return Dot(Nref, I) < 0.0f ? N : Negate(N);
+        }
+
+        /// <summary>
+        /// For the incident vector I and surface orientation N,
+        /// return the reflection direction: result = I - 2.0 * Dot(N, I) * N.
+        /// </summary>
+        /// <param name="I"></param>
+        /// <param name="N"></param>
+        /// <returns></returns>
+        public static Vec4f Reflect(Vec4f I, Vec4f N)
+        {
+            //TODO: Use operatores instead of function madness.
+            return I - N * Dot(N, I) * 2.0f;
+
+            //return Subtract(I, Multiply(N, Dot(N, I) * 2.0f));
+        }
+
+        /// <summary>
+        /// For the incident vector I and surface normal N,
+        /// and the ratio of indices of refraction eta,
+        /// return the refraction vector.
+        /// </summary>
+        /// <param name="I"></param>
+        /// <param name="N"></param>
+        /// <returns></returns>
+        public static Vec4f Refract(Vec4f I, Vec4f N, float eta)
+        {
+            //TODO: Use operatores instead of function madness.
+
+            float dotValue = Dot(N, I);
+            float k = 1.0f - eta * eta * (1.0f - dotValue * dotValue);
+
+            if (k < 0.0f)
+                return Vec4f.Zero;
+            else
+                return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
+            //TODO: Use operatores instead of function madness.
+            //return Multiply(Subtract(Multiply(I, eta), (eta * dotValue + MathFunctions.Sqrt(k))), N);
+
+            //return Multiply(Subtract(Multiply(I, eta),sdf), N);
+            //return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
+
+            // return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
+        }
+
 
         #endregion
 
@@ -464,6 +522,348 @@ namespace Kraggs.Graphics.Math3D
         public static Vec4f Negate(Vec4f vec)
         {
             return new Vec4f() { x = -vec.x, y = -vec.y, z = -vec.z, w = -vec.w };
+        }
+
+        #endregion
+
+        #region Static Operator Functions
+
+        /// <summary>
+        /// Adds two vectors to each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator +(Vec4f left, Vec4f right)
+        {
+            return new Vec4f()
+            {
+                x = left.x + right.x,
+                y = left.y + right.y,
+                z = left.z + right.z,
+                w = left.w + right.w
+            };
+        }
+
+        /// <summary>
+        /// Subtracts one vector from another.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator -(Vec4f left, Vec4f right)
+        {
+            return new Vec4f()
+            {
+                x = left.x - right.x,
+                y = left.y - right.y,
+                z = left.z - right.z,
+                w = left.w - right.w
+            };
+        }
+
+        /// <summary>
+        /// Multiplies two vectors with each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator *(Vec4f left, Vec4f right)
+        {
+            return new Vec4f()
+            {
+                x = left.x * right.x,
+                y = left.y * right.y,
+                z = left.z * right.z,
+                w = left.w * right.w
+            };
+        }
+
+        /// <summary>
+        /// Divides two vectores from each other component wise.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator /(Vec4f left, Vec4f right)
+        {
+            return new Vec4f()
+            {
+                x = left.x / right.x,
+                y = left.y / right.y,
+                z = left.z / right.z,
+                w = left.w / right.w
+            };
+        }
+        /// <summary>
+        /// Adds a scalar to a vector.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator +(Vec4f vec, float scalar)
+        {
+            return new Vec4f()
+            {
+                x = vec.x + scalar,
+                y = vec.y + scalar,
+                z = vec.z + scalar,
+                w = vec.w + scalar
+            };
+        }
+        /// <summary>
+        /// Subtracts a scalar from a vector.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator -(Vec4f vec, float scalar)
+        {
+            return new Vec4f()
+            {
+                x = vec.x - scalar,
+                y = vec.y - scalar,
+                z = vec.z - scalar,
+                w = vec.w - scalar
+            };
+        }
+
+        /// <summary>
+        /// Multiplies a vector and a scalar.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator *(Vec4f vec, float scalar)
+        {
+            return new Vec4f()
+            {
+                x = vec.x * scalar,
+                y = vec.y * scalar,
+                z = vec.z * scalar,
+                w = vec.w * scalar
+            };
+        }
+        /// <summary>
+        /// Divides a vector with a scalar.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator /(Vec4f vec, float scalar)
+        {
+            float f = 1.0f / scalar;
+
+            return new Vec4f()
+            {
+                x = vec.x * f,
+                y = vec.y * f,
+                z = vec.z * f,
+                w = vec.w * f
+            };
+        }
+        /// <summary>
+        /// Adds a scalar to a vector.
+        /// </summary>
+        /// <param name="scalar"></param>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator +(float scalar, Vec4f vec)
+        {
+            return new Vec4f()
+            {
+                x = scalar + vec.x,
+                y = scalar + vec.y,
+                z = scalar + vec.z,
+                w = scalar + vec.w
+            };
+        }
+        /// <summary>
+        /// Subtracts a vector from a scalar.
+        /// </summary>
+        /// <param name="scalar"></param>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator -(float scalar, Vec4f vec)
+        {
+            return new Vec4f()
+            {
+                x = scalar - vec.x,
+                y = scalar - vec.y,
+                z = scalar - vec.z,
+                w = scalar - vec.w
+            };
+        }
+        /// <summary>
+        /// Multiplies a scalar with a vector.
+        /// </summary>
+        /// <param name="scalar"></param>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator *(float scalar, Vec4f vec)
+        {
+            return new Vec4f()
+            {
+                x = scalar * vec.x,
+                y = scalar * vec.y,
+                z = scalar * vec.z,
+                w = scalar * vec.w
+            };
+        }
+        /// <summary>
+        /// Divies a scalar with a vector.
+        /// </summary>
+        /// <param name="scalar"></param>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator /(float scalar, Vec4f vec)
+        {
+            float f = 1.0f / scalar;
+
+            return new Vec4f()
+            {
+                x = f * vec.x,
+                y = f * vec.y,
+                z = f * vec.z,
+                w = f * vec.w
+            };
+        }
+
+        /// <summary>
+        /// Negates a vector.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f operator -(Vec4f vec)
+        {
+            return new Vec4f()
+            {
+                x = -vec.x,
+                y = -vec.y,
+                z = -vec.z,
+                w = -vec.w
+            };
+        }
+
+        /// <summary>
+        /// Compares two vectors with each other for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns>true if equal, false otherwise.</returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(Vec4f left, Vec4f right)
+        {
+            return
+                left.x == right.x &&
+                left.y == right.y &&
+                left.z == right.z &&
+                left.w == right.w;
+        }
+
+        /// <summary>
+        /// Compares two vectors with each other for inequality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns>true if not equal, false otherwise.</returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(Vec4f left, Vec4f right)
+        {
+            return
+                left.x != right.x ||
+                left.y != right.y ||
+                left.z != right.z ||
+                left.w != right.w;
+        }
+
+
+        /// <summary>
+        /// Returns unsafe float* pointer to x.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public unsafe static explicit operator float*(Vec4f vec)
+        {
+            return &vec.x;
+        }
+        /// <summary>
+        /// Returns unsafe IntPtr pointer to x.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public unsafe static explicit operator IntPtr(Vec4f vec)
+        {
+            return (IntPtr)(&vec.x);
+        }
+
+        #endregion
+
+        #region Object Overloads
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override int GetHashCode()
+        {
+            return x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode() ^ w.GetHashCode();
+        }
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override string ToString()
+        {
+            return string.Format("[{0}, {1}, {2}, {3}]", x, y, z, w);
+        }
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override bool Equals(object obj)
+        {
+            if (obj is Vec4f)
+                return Equals((Vec4f)obj);
+            else
+                return false;
+        }
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals(Vec4f other)
+        {
+            return
+                x == other.x &&
+                y == other.y &&
+                z == other.z &&
+                w == other.w;
         }
 
         #endregion
