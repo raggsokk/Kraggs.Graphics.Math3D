@@ -114,6 +114,27 @@ namespace Kraggs.Graphics.Math3D
         #region Static Functions
 
         /// <summary>
+        /// Returns a Normlized version of the vector.
+        /// </summary>
+        /// <param name="vec">Vector to get normal from.</param>
+        /// <returns>Normalized vector.</returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Normalize(Vec4f vec)
+        {
+            var f = 1.0f / MathFunctions.Sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z + vec.w * vec.w);
+
+            return new Vec4f()
+            {
+                x = vec.x * f,
+                y = vec.y * f,
+                z = vec.z * f,
+                w = vec.w * f
+            };
+        }
+
+
+        /// <summary>
         /// Returns the distance between 2 vectors.
         /// </summary>
         /// <param name="left">left side</param>
@@ -127,7 +148,324 @@ namespace Kraggs.Graphics.Math3D
             return t.Length;
         }
 
+        /// <summary>
+        /// Returns the dot product of two pre-normlized vectors.
+        /// </summary>
+        /// <param name="left">a normalized vector.</param>
+        /// <param name="right">a normlized vector.</param>
+        /// <returns>dot product.</returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Dot(Vec4f left, Vec4f right)
+        {
+            return left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
+        }
+        /// <summary>
+        /// Returns the dot product of two pre-normlized vectors.
+        /// </summary>
+        /// <param name="left">a normalized vector.</param>
+        /// <param name="right">a normalized vector.</param>
+        /// <param name="result">dot product</param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Dot(ref Vec4f left, ref Vec4f right, out float result)
+        {
+            result = left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
+        }
+
+        /// <summary>
+        /// Returns the cross product of two pre-normalized vectors.
+        /// </summary>
+        /// <param name="left">a normalized vector.</param>
+        /// <param name="right">a normalized vector.</param>
+        /// <returns>cross product</returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Cross(Vec4f u, Vec4f v, Vec4f w)
+        {
+            Vec4f result;
+            Cross(ref u, ref v, ref w, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Returns the cross product of two pre-normalized vectors.
+        /// </summary>
+        /// <param name="left">a normalized vector.</param>
+        /// <param name="right">a normalied vector</param>
+        /// <param name="result">the cross product.</param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Cross(ref Vec4f u, ref Vec4f v, ref Vec4f w, out Vec4f result)
+        {
+            float a, b, c, d, e, f;
+
+            // calculate intermediate values.
+            a = v.x * w.y - v.y * w.x;
+            b = v.x * w.z - v.z * w.x;
+            c = v.x * w.w - v.w * w.x;
+            d = v.y * w.z - v.z * w.y;
+            e = v.y * w.w - v.w * w.y;
+            f = v.z * w.w - v.w * w.z;
+
+            // calculate the result vector components.
+            //result.x =  u.y * f - u.z * e + u.w * d;
+            //result.y = -u.x * f + u.z * c - u.w * b;
+            //result.z =  u.x * e - u.y * c + u.w * a;
+            //result.w = -u.x * d + u.y * b - u.z * a;
+
+            result = new Vec4f()
+            {
+                x =  u.y * f - u.z * e + u.w * d,
+                y = -u.x * f + u.z * c - u.w * b,
+                z =  u.x * e - u.y * c + u.w * a,
+                w = -u.x * d + u.y * b - u.z * a
+            };
+        }
+
+        /// <summary>
+        /// This calculates cross product as the vectors was 3d vectors, totaly ignoring w component.
+        /// Will probably be totaly wrong if w component is not 0.
+        /// </summary>
+        /// <param name="left">a vector with w = 0</param>
+        /// <param name="right">another vector with w = 0</param>
+        /// <param name="result"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Cross(ref Vec4f left, ref Vec4f right, out Vec4f result)
+        {
+            result = new Vec4f()
+            {
+                x = left.y * right.z - left.z * right.y,
+                y = left.z * right.x - left.x * right.z,
+                z = left.x * right.y - left.y * right.x,
+                w = 0,
+            };
+        }
+
+
         #endregion
 
+        #region Static Arithmetic Functions
+
+        /// <summary>
+        /// Adds a vector and a scalar
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Add(Vec4f vec, float scalar)
+        {
+            return new Vec4f() { x = vec.x + scalar, y = vec.y + scalar, z = vec.z + scalar, w = vec.w + scalar };
+        }
+        /// <summary>
+        /// Adds a vector and a scalar
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <param name="result"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Add(ref Vec4f vec, float scalar, out Vec4f result)
+        {
+            result = new Vec4f() { x = vec.x + scalar, y = vec.y + scalar, z = vec.z + scalar, w = vec.w + scalar };
+        }
+
+        /// <summary>
+        /// Subtracts from a vector a scalar
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Subtract(Vec4f vec, float scalar)
+        {
+            return new Vec4f() { x = vec.x - scalar, y = vec.y - scalar, z = vec.z - scalar, w = vec.w - scalar };
+        }
+        /// <summary>
+        /// Subtracts from a vector a scalar
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <param name="result"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Subtract(ref Vec4f vec, float scalar, out Vec4f result)
+        {
+            result = new Vec4f() { x = vec.x - scalar, y = vec.y - scalar, z = vec.z - scalar, w = vec.w - scalar };
+        }
+
+        /// <summary>
+        /// Multiplies a vector and a scalar
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Multiply(Vec4f vec, float scalar)
+        {
+            return new Vec4f() { x = vec.x * scalar, y = vec.y * scalar, z = vec.z * scalar, w = vec.w * scalar };
+        }
+        /// <summary>
+        /// Multiplies a vector and a scalar
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <param name="result"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Multiply(ref Vec4f vec, float scalar, out Vec4f result)
+        {
+            result = new Vec4f() { x = vec.x * scalar, y = vec.y * scalar, z = vec.z * scalar, w = vec.w * scalar };
+        }
+
+        /// <summary>
+        /// Divides a vector with a scalar component wise.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Divide(Vec4f vec, float scalar)
+        {
+            //return new Vec4f() { x = vec.x + scalar, y = vec.y + scalar };
+            Divide(ref vec, scalar, out vec);
+            return vec;
+        }
+        /// <summary>
+        /// Divides a vector with a scalar component wise.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <param name="result"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Divide(ref Vec4f vec, float scalar, out Vec4f result)
+        {
+            Multiply(ref vec, 1.0f / scalar, out result);
+            //result = new Vec4f() { x = vec.x + scalar, y = vec.y + scalar };
+        }
+
+        /// <summary>
+        /// Adds to vectors to each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Add(Vec4f left, Vec4f right)
+        {
+            return new Vec4f() { x = left.x + right.x, y = left.y + right.y, z = left.z + right.z, w = left.w + right.w };
+            //Vec4f result;
+            //Add(ref left, ref right, out result);
+            //return result;
+        }
+        /// <summary>
+        /// Adds to vectors to each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="result"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Add(ref Vec4f left, ref Vec4f right, out Vec4f result)
+        {
+            result = new Vec4f() { x = left.x + right.x, y = left.y + right.y, z = left.z + right.z, w = left.w + right.w };
+        }
+
+        /// <summary>
+        /// Subtracts 2 vectors from each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Subtract(Vec4f left, Vec4f right)
+        {
+            return new Vec4f() { x = left.x - right.x, y = left.y - right.y, z = left.z - right.z, w = left.w - right.w };
+        }
+        /// <summary>
+        /// Subtracts 2 vectors from each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="result"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Subtract(ref Vec4f left, ref Vec4f right, out Vec4f result)
+        {
+            result = new Vec4f() { x = left.x - right.x, y = left.y - right.y, z = left.z - right.z, w = left.w - right.w };
+        }
+
+        /// <summary>
+        /// Multiplies 2 vectors with each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Multiply(Vec4f left, Vec4f right)
+        {
+            return new Vec4f() { x = left.x * right.x, y = left.y * right.y, z = left.z * right.z, w = left.w * right.w };
+        }
+        /// <summary>
+        /// Multiplies 2 vectors with each other.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="result"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Multiply(ref Vec4f left, ref Vec4f right, out Vec4f result)
+        {
+            result = new Vec4f() { x = left.x * right.x, y = left.y * right.y, z = left.z * right.z, w = left.w * right.w };
+        }
+
+        /// <summary>
+        /// Divides 2 vectors with each other component wise.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Divide(Vec4f left, Vec4f right)
+        {
+            return new Vec4f() { x = left.x / right.x, y = left.y / right.y, z = left.z / right.z, w = left.w / right.w };
+        }
+        /// <summary>
+        /// Divides 2 vectors with each other component wise.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="result"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Divide(ref Vec4f left, ref Vec4f right, out Vec4f result)
+        {
+            result = new Vec4f() { x = left.x / right.x, y = left.y / right.y, z = left.z / right.z, w = left.w / right.w };
+        }
+
+        /// <summary>
+        /// Negates a vector.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Negate(Vec4f vec)
+        {
+            return new Vec4f() { x = -vec.x, y = -vec.y, z = -vec.z, w = -vec.w };
+        }
+
+        #endregion
     }
 }
