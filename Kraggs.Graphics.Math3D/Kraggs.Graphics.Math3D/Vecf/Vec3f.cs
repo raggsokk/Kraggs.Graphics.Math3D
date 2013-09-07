@@ -28,6 +28,25 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         public float z;
 
+        #region Constructors
+
+        /// <summary>
+        /// Constructs a vector from individualy components.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec3f(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>

@@ -24,6 +24,18 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         public float y;
 
+        #region Constructors
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec2f(float x, float y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>

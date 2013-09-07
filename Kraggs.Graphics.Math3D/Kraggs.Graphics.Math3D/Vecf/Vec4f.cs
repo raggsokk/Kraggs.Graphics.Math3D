@@ -32,6 +32,42 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         public float w;
 
+        #region Constructors
+
+        /// <summary>
+        /// Constructs a vector from individualy components.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec4f(float x, float y, float z, float w)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
+        }
+
+        /// <summary>
+        /// Constructs a Vec4f from a Vec3f with optionally w component.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="w"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec4f(Vec3f vec, float w = 0.0f)
+        {
+            this.x = vec.x;
+            this.y = vec.y;
+            this.z = vec.z;
+            this.w = w;
+        }
+
+        #endregion
+
+
         #region Properties
 
         /// <summary>
