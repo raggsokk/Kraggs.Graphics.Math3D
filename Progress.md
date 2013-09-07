@@ -107,7 +107,7 @@ Milestone 8
 	Stream Extension
 		ReadVec<T>
 		ReadMat<T>
-
+	SizeInBytes?
 
 
 
