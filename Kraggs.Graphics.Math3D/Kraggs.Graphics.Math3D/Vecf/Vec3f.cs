@@ -45,6 +45,20 @@ namespace Kraggs.Graphics.Math3D
             this.z = z;
         }
 
+        /// <summary>
+        /// Contructs a Vec3f from a Vec2f and a z component.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="z"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec3f(Vec2f vec, float z = 0.0f)
+        {
+            this.x = vec.x;
+            this.y = vec.y;
+            this.z = z;
+        }
+
         #endregion
 
         #region Properties

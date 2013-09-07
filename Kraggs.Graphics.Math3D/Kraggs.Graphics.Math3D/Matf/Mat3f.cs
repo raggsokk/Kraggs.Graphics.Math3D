@@ -10,7 +10,7 @@ namespace Kraggs.Graphics.Math3D
 {
     //[DebuggerDisplay("TODO")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Mat3f
+    public partial struct Mat3f : IEquatable<Mat3f>
     {
         /// <summary>
         /// The first Column.
@@ -672,8 +672,147 @@ namespace Kraggs.Graphics.Math3D
             };
         }
 
+        /// <summary>
+        /// Compares two matrices for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(Mat3f left, Mat3f right)
+        {
+            return
+                left.c0.x == right.c0.x &&
+                left.c0.y == right.c0.y &&
+                left.c0.z == right.c0.z &&
+                left.c1.x == right.c1.x &&
+                left.c1.y == right.c1.y &&
+                left.c1.z == right.c1.z &&
+                left.c2.x == right.c2.x &&
+                left.c2.y == right.c2.y &&
+                left.c2.z == right.c2.z;
+        }
+
+        /// <summary>
+        /// Compares two matrices for inequality.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(Mat3f left, Mat3f right)
+        {
+            return
+                left.c0.x != right.c0.x ||
+                left.c0.y != right.c0.y ||
+                left.c0.z != right.c0.z ||
+                left.c1.x != right.c1.x ||
+                left.c1.y != right.c1.y ||
+                left.c1.z != right.c1.z ||
+                left.c2.x != right.c2.x ||
+                left.c2.y != right.c2.y ||
+                left.c2.z != right.c2.z;
+        }
+
+        /// <summary>
+        /// Implicit conversion from Mat2f to Mat3f with emmpty values taken from identity matrix.
+        /// Aka c2.z = 1.0f in this conversion.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Mat3f (Mat2f m)
+        {
+            return new Mat3f()
+            {
+                c0 = new Vec3f(m.c0),
+                c1 = new Vec3f(m.c1),
+                c2 = Vec3f.UnitZ
+            };
+        }
+
+        /// <summary>
+        /// Explicit conversion from Mat4f to Mat3f with possible dataloss.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Mat3f(Mat4f m)
+        {
+            return new Mat3f(
+                m.c0.x, m.c0.y, m.c0.z,
+                m.c1.x, m.c1.y, m.c1.z,
+                m.c2.x, m.c2.y, m.c2.z
+                );
+        }
 
         #endregion
+
+        #region Object Overloads
+
+        /// <summary>
+        /// Returns the hashcode of this matrix.
+        /// </summary>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override int GetHashCode()
+        {
+            return c0.GetHashCode() ^ c1.GetHashCode() ^ c2.GetHashCode();
+        }
+        /// <summary>
+        /// Returns a string representation of this matrix.
+        /// </summary>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override string ToString()
+        {
+            return string.Format(
+                "{0}\n{1}\n{2}", c0, c1, c2);
+        }
+
+        /// <summary>
+        /// Compares this matrix with another object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override bool Equals(object obj)
+        {
+            if (obj is Mat3f)
+                return Equals((Mat3f)obj);
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Compares this matrix with another matrix.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals(Mat3f other)
+        {
+            return
+                this.c0.x == other.c0.x &&
+                this.c0.y == other.c0.y &&
+                this.c0.z == other.c0.z &&
+                this.c1.x == other.c1.x &&
+                this.c1.y == other.c1.y &&
+                this.c1.z == other.c1.z &&
+                this.c2.x == other.c2.x &&
+                this.c2.y == other.c2.y &&
+                this.c2.z == other.c2.z;
+        }
+
+        #endregion        
 
         #region Debug Print Instance
 

@@ -10,7 +10,7 @@ namespace Kraggs.Graphics.Math3D
 {
     //[DebuggerDisplay("TODO")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Mat4f
+    public partial struct Mat4f : IEquatable<Mat4f>
     {
         /// <summary>
         /// The First Column.
@@ -318,7 +318,7 @@ namespace Kraggs.Graphics.Math3D
 
             float determinant = Vec4f.Dot(m.c0, Row0);
             
-            return inverse * determinant;
+            return inverse / determinant;
 
         }
 
@@ -768,7 +768,171 @@ namespace Kraggs.Graphics.Math3D
             };
         }
 
+        /// <summary>
+        /// Compares two matrices for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(Mat4f left, Mat4f right)
+        {
+            return
+                left.c0.x == right.c0.x &&
+                left.c0.y == right.c0.y &&
+                left.c0.z == right.c0.z &&
+                left.c0.w == right.c0.w &&
+                left.c1.x == right.c1.x &&
+                left.c1.y == right.c1.y &&
+                left.c1.z == right.c1.z &&
+                left.c1.w == right.c1.w &&
+                left.c2.x == right.c2.x &&
+                left.c2.y == right.c2.y &&
+                left.c2.z == right.c2.z &&
+                left.c2.w == right.c2.w &&
+                left.c3.x == right.c3.x &&
+                left.c3.y == right.c3.y &&
+                left.c3.z == right.c3.z &&
+                left.c3.w == right.c3.w;
+        }
+
+        /// <summary>
+        /// Compares two matrices for inequality.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(Mat4f left, Mat4f right)
+        {
+            return
+                left.c0.x != right.c0.x ||
+                left.c0.y != right.c0.y ||
+                left.c0.z != right.c0.z ||
+                left.c0.w != right.c0.w ||
+                left.c1.x != right.c1.x ||
+                left.c1.y != right.c1.y ||
+                left.c1.z != right.c1.z ||
+                left.c1.w != right.c1.w ||
+                left.c2.x != right.c2.x ||
+                left.c2.y != right.c2.y ||
+                left.c2.z != right.c2.z ||
+                left.c2.w != right.c2.w ||
+                left.c3.x != right.c3.x ||
+                left.c3.y != right.c3.y ||
+                left.c3.z != right.c3.z ||
+                left.c3.w != right.c3.w;
+        }
+
+        /// <summary>
+        /// Implicit conversion from Mat2f to Mat4f.
+        /// c3.w = 1.0f
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Mat4f(Mat2f m)
+        {
+            return new Mat4f()
+            {
+                c0 = new Vec4f() { x = m.c0.x, y = m.c0.y, z = 0.0f, w = 0.0f},
+                c1 = new Vec4f() { x = m.c1.x, y = m.c1.y, z = 0.0f, w = 0.0f },
+                c2 = Vec4f.Zero,
+                c3 = Vec4f.UnitW,
+            };
+        }
+        /// <summary>
+        /// Implicit conversion from Mat3f to Mat4f.
+        /// c3.w = 1.0f
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Mat4f(Mat3f m)
+        {
+            return new Mat4f()
+            {
+                c0 = new Vec4f(m.c0),
+                c1 = new Vec4f(m.c1),
+                c2 = new Vec4f(m.c2),
+                c3 = Vec4f.UnitW,
+            };
+        }
+
         #endregion
+
+        #region Object Overloads
+
+        /// <summary>
+        /// Returns the hashcode of this matrix.
+        /// </summary>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override int GetHashCode()
+        {
+            return c0.GetHashCode() ^ c1.GetHashCode() ^ c2.GetHashCode() ^ c3.GetHashCode();
+        }
+        /// <summary>
+        /// Returns a string representation of this matrix.
+        /// </summary>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override string ToString()
+        {
+            return string.Format(
+                "{0}\n{1}\n{2}\n{3}", c0, c1, c2, c3);
+        }
+
+        /// <summary>
+        /// Compares this matrix with another object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override bool Equals(object obj)
+        {
+            if (obj is Mat4f)
+                return Equals((Mat4f)obj);
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Compares this matrix with another matrix.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals(Mat4f other)
+        {
+            return
+                this.c0.x == other.c0.x &&
+                this.c0.y == other.c0.y &&
+                this.c0.z == other.c0.z &&
+                this.c0.w == other.c0.w &&
+                this.c1.x == other.c1.x &&
+                this.c1.y == other.c1.y &&
+                this.c1.z == other.c1.z &&
+                this.c1.w == other.c1.w &&
+                this.c2.x == other.c2.x &&
+                this.c2.y == other.c2.y &&
+                this.c2.z == other.c2.z &&
+                this.c2.w == other.c2.w &&
+                this.c3.x == other.c3.x &&
+                this.c3.y == other.c3.y &&
+                this.c3.z == other.c3.z &&
+                this.c3.w == other.c3.w;
+        }
+
+        #endregion        
 
         #region Debug Print Instance
 

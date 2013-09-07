@@ -11,7 +11,7 @@ namespace Kraggs.Graphics.Math3D
     //[DebuggerDisplay("TODO")]
     [DebuggerDisplay("{DebugDisplayHelper()}")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Mat2f
+    public partial struct Mat2f : IEquatable<Mat2f>
     {
         /// <summary>
         /// The first column.
@@ -572,9 +572,96 @@ namespace Kraggs.Graphics.Math3D
             };
         }
 
+        /// <summary>
+        /// Compares two matrices for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(Mat2f left, Mat2f right)
+        {
+            return
+                left.c0.x == right.c0.x &&
+                left.c0.y == right.c0.y &&
+                left.c1.x == right.c1.x &&
+                left.c1.y == right.c1.y;
+        }
+
+        /// <summary>
+        /// Compares two matrices for inequality.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(Mat2f left, Mat2f right)
+        {
+            return
+                left.c0.x != right.c0.x ||
+                left.c0.y != right.c0.y ||
+                left.c1.x != right.c1.x ||
+                left.c1.y != right.c1.y;
+        }
+
         #endregion
 
         #region Object Overloads
+
+        /// <summary>
+        /// Returns the hashcode of this matrix.
+        /// </summary>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override int GetHashCode()
+        {
+            return c0.GetHashCode() ^ c1.GetHashCode();
+        }
+        /// <summary>
+        /// Returns a string representation of this matrix.
+        /// </summary>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override string ToString()
+        {
+            return string.Format(
+                "{0}\n{1}", c0, c1);
+        }
+
+        /// <summary>
+        /// Compares this matrix with another object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override bool Equals(object obj)
+        {
+            if (obj is Mat2f)
+                return Equals((Mat2f)obj);
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Compares this matrix with another matrix.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals(Mat2f other)
+        {
+            return
+                this.c0.x == other.c0.x &&
+                this.c0.y == other.c0.y &&
+                this.c1.x == other.c1.x &&
+                this.c1.y == other.c1.y;
+        }
 
         #endregion
 
