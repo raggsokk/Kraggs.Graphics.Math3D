@@ -11,7 +11,7 @@ namespace Kraggs.Graphics.Math3D
     //[DebuggerDisplay("TODO")]
     [DebuggerDisplay("{DebugDisplayHelper()}")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Mat2f : IEquatable<Mat2f>
+    public partial struct Mat2f : IEquatable<Mat2f>, IGLMatrix, IGenericStream
     {
         /// <summary>
         /// The first column.
@@ -805,6 +805,134 @@ namespace Kraggs.Graphics.Math3D
             }
 
             return sb.ToString();
+        }
+
+        #endregion
+
+        #region IGLMatrix Implementation
+
+        /// <summary>
+        /// Number of columns in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMatrix.ColumnCount
+        {
+            get { return 2; }
+        }
+
+        /// <summary>
+        /// Number of rows in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMatrix.RowCount
+        {
+            get { return 2; }
+        }
+
+        /// <summary>
+        /// Is this a square matrix aka columncount=rowcount
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMatrix.IsSquareMatrix
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Returns the dotnet type of this components.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        Type IGLMath.BaseType
+        {
+            get { return typeof(Mat2f); }
+        }
+
+        /// <summary>
+        /// The number of components totaly in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.ComponentCount
+        {
+            get { return 4; }
+        }
+
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Mat2f));
+
+        /// <summary>
+        /// Returns the inmemory size in bytes of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.SizeInBytes
+        {
+            get { return Mat2f.SizeInBytes; }
+        }
+
+        /// <summary>
+        /// Returns the gl enum for base compoenent.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLBaseType
+        {
+            get { return GLConstants.GL_BASE_FLOAT; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL attribute type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLAttributeType
+        {
+            get { return GLConstants.FLOAT_MAT2; }
+        }
+
+        /// <summary>
+        /// Returns the opengl uniform type enum.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLUniformType
+        {
+            get { return GLConstants.FLOAT_MAT2; }
+        }
+
+        /// <summary>
+        /// Returns wether this is a matrix (true)
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMath.IsMatrix
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        #region IGenericStream Implementation
+
+        /// <summary>
+        /// Writes matrix to stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="vec"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void WriteStream(System.IO.BinaryWriter writer, object matrix)
+        {
+            Mat2f m = (Mat2f)matrix;
+            writer.Write(m.c0.x);
+            writer.Write(m.c0.y);
+            writer.Write(m.c1.x);
+            writer.Write(m.c1.y);
+        }
+
+        /// <summary>
+        /// Reads in a new vector from stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public object ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Mat2f(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
         #endregion

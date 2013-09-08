@@ -13,7 +13,7 @@ namespace Kraggs.Graphics.Math3D
     /// </summary>
     [DebuggerDisplay("[ {x}, {y} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vec2f : IEquatable<Vec2f>
+    public partial struct Vec2f : IEquatable<Vec2f>, IGLMath, IGenericStream
     {
         /// <summary>
         /// The x component.
@@ -33,6 +33,20 @@ namespace Kraggs.Graphics.Math3D
             this.x = x;
             this.y = y;
         }
+
+        //public static Vec2f[] FromBytes(byte[] buffer, int offset, int count)
+        //{
+        //    throw new NotImplementedException();
+        //    int len = 0;
+        //    int vcount = 0;
+
+        //    var vecs = new Vec2f[vcount];
+
+        //    for (int i = offset; i < len; i += Vec2f.SizeInBytes)
+        //    {
+        //        //vecs[count].x = BitConverter.ToSingle(
+        //    }
+        //}        
 
         #endregion
 
@@ -999,6 +1013,109 @@ namespace Kraggs.Graphics.Math3D
         public bool Equals(Vec2f other)
         {
             return x == other.x && y == other.y;
+        }
+
+        #endregion
+
+        #region IGLMath
+
+        /// <summary>
+        /// Returns the dotnet type of this components.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        Type IGLMath.BaseType
+        {
+            get { return typeof(float); }
+        }
+
+        /// <summary>
+        /// The number of components totaly in this vector.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.ComponentCount
+        {
+            get { return 2; }
+        }
+
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vec2f));
+
+        /// <summary>
+        /// Returns the inmemory size in bytes of this vector.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.SizeInBytes
+        {
+            get { return Vec2f.SizeInBytes; }
+        }
+
+        /// <summary>
+        /// Returns the gl enum for base compoenent.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLBaseType
+        {
+            get { return GLConstants.GL_BASE_FLOAT; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL attribute type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLAttributeType
+        {
+            get { return GLConstants.FLOAT_VEC2; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL uniform type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLUniformType
+        {
+            get { return GLConstants.FLOAT_VEC2; }
+        }
+
+        /// <summary>
+        /// Is this a matrix (false)
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMath.IsMatrix
+        {
+            get { return false; }
+        }
+
+        #endregion
+
+        #region IGenericStream Implementation
+
+        /// <summary>
+        /// Writes vec to stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="vec"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void WriteStream(System.IO.BinaryWriter writer, object vec)
+        {
+            Vec2f v = (Vec2f)vec;
+            writer.Write(v.x);
+            writer.Write(v.y);
+        }
+
+        /// <summary>
+        /// Reads in a new vector from stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public object ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Vec2f()
+            {
+                x = reader.ReadSingle(),
+                y = reader.ReadSingle()
+            };
         }
 
         #endregion

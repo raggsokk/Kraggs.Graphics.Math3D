@@ -115,6 +115,15 @@ Milestone 8
 Milestone 9
 	Quaternions
 
+Milestone 10
+	reimplement Generics to use
+		a separate description struct.
+		This struct should have no instance
+		members but only functions/properties.
+
+Milestone 11
+	noise
+
 Release 1
 	Milestone 1
 	Milestone 2

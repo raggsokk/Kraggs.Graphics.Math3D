@@ -10,7 +10,7 @@ namespace Kraggs.Graphics.Math3D
 {
     //[DebuggerDisplay("TODO")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Mat4f : IEquatable<Mat4f>
+    public partial struct Mat4f : IEquatable<Mat4f>, IGLMatrix, IGenericStream
     {
         /// <summary>
         /// The First Column.
@@ -1644,5 +1644,174 @@ namespace Kraggs.Graphics.Math3D
         }
 
         #endregion
+
+        #region IGLMatrix Implementation
+
+        /// <summary>
+        /// Number of columns in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMatrix.ColumnCount
+        {
+            get { return 4; }
+        }
+
+        /// <summary>
+        /// Number of rows in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMatrix.RowCount
+        {
+            get { return 4; }
+        }
+
+        /// <summary>
+        /// Is this a square matrix aka columncount=rowcount
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMatrix.IsSquareMatrix
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Returns the dotnet type of this components.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        Type IGLMath.BaseType
+        {
+            get { return typeof(Mat4f); }
+        }
+
+        /// <summary>
+        /// The number of components totaly in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.ComponentCount
+        {
+            get { return 16; }
+        }
+
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Mat4f));
+
+        /// <summary>
+        /// Returns the inmemory size in bytes of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.SizeInBytes
+        {
+            get { return Mat4f.SizeInBytes; }
+        }
+
+        /// <summary>
+        /// Returns the gl enum for base compoenent.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLBaseType
+        {
+            get { return GLConstants.GL_BASE_FLOAT; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL attribute type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLAttributeType
+        {
+            get { return GLConstants.FLOAT_MAT4; }
+        }
+
+        /// <summary>
+        /// Returns the opengl uniform type enum.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLUniformType
+        {
+            get { return GLConstants.FLOAT_MAT4; }
+        }
+
+        /// <summary>
+        /// Returns wether this is a matrix (true)
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMath.IsMatrix
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        #region IGenericStream Implementation
+
+        //[DebuggerNonUserCode()]
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public void WriteStream(System.IO.BinaryWriter writer, object matrix)
+        //{
+        //    Mat4f m = (Mat4f)matrix;
+
+        //    writer.Write(m.c0.x);
+        //    writer.Write(m.c0.y);
+        //    writer.Write(m.c0.z);
+        //    writer.Write(m.c0.w);
+        //    writer.Write(m.c1.x);
+        //    writer.Write(m.c1.y);
+        //    writer.Write(m.c1.z);
+        //    writer.Write(m.c1.w);
+        //    writer.Write(m.c2.x);
+        //    writer.Write(m.c2.y);
+        //    writer.Write(m.c2.z);
+        //    writer.Write(m.c2.w);
+        //    writer.Write(m.c3.x);
+        //    writer.Write(m.c3.y);
+        //    writer.Write(m.c3.z);
+        //    writer.Write(m.c3.w);
+        //}
+
+        /// <summary>
+        /// Writes matrix to stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="vec"></param>
+        [DebuggerNonUserCode()]
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)] // not working with unsafe code!
+        public unsafe void WriteStream(System.IO.BinaryWriter writer, object matrix)
+        {            
+            Mat4f m = (Mat4f)matrix;
+
+            var buf = new byte[Mat4f.SizeInBytes];
+            float* ptr = &m.c0.x;
+
+            Marshal.Copy((IntPtr)ptr, buf, 0, buf.Length);
+            writer.Write(buf, 0, buf.Length);
+
+        }
+
+        /// <summary>
+        /// Reads in a new vector from stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)] // not working with unsafe code!
+        public unsafe object ReadStream(System.IO.BinaryReader reader)
+        {
+            var buf = new byte[Mat4f.SizeInBytes];
+
+            reader.Read(buf, 0, buf.Length);
+
+            Mat4f result;
+
+            fixed (byte* ptr = &buf[0])
+            {
+                Mat4f* p = (Mat4f*)ptr;
+
+                result = *p;
+            }
+
+            return result;
+        }
+
+        #endregion
+
     }
 }

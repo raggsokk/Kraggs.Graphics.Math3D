@@ -13,7 +13,7 @@ namespace Kraggs.Graphics.Math3D
     /// </summary>
     [DebuggerDisplay("[ {x}, {y}, {z} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vec3f : IEquatable<Vec3f>
+    public partial struct Vec3f : IEquatable<Vec3f>, IGLMath, IGenericStream
     {
         /// <summary>
         /// The x component.
@@ -1169,5 +1169,111 @@ namespace Kraggs.Graphics.Math3D
         }
 
         #endregion
+
+        #region IGLMath
+
+        /// <summary>
+        /// Returns the dotnet type of this components.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        Type IGLMath.BaseType
+        {
+            get { return typeof(float); }
+        }
+
+        /// <summary>
+        /// The number of components totaly in this vector.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.ComponentCount
+        {
+            get { return 3; }
+        }
+
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vec3f));
+
+        /// <summary>
+        /// Returns the inmemory size in bytes of this vector.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.SizeInBytes
+        {
+            get { return Vec3f.SizeInBytes; }
+        }
+
+        /// <summary>
+        /// Returns the gl enum for base compoenent.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLBaseType
+        {
+            get { return GLConstants.GL_BASE_FLOAT; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL attribute type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLAttributeType
+        {
+            get { return GLConstants.FLOAT_VEC3; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL uniform type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLUniformType
+        {
+            get { return GLConstants.FLOAT_VEC3; }
+        }
+
+        /// <summary>
+        /// Is this a matrix (false)
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMath.IsMatrix
+        {
+            get { return false; }
+        }
+
+        #endregion
+
+        #region IGenericStream Implementation
+
+        /// <summary>
+        /// Writes vec to stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="vec"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void WriteStream(System.IO.BinaryWriter writer, object vec)
+        {
+            Vec3f v = (Vec3f)vec;
+            writer.Write(v.x);
+            writer.Write(v.y);
+            writer.Write(v.z);
+        }
+
+        /// <summary>
+        /// Reads in a new vector from stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public object ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Vec3f()
+            {
+                x = reader.ReadSingle(),
+                y = reader.ReadSingle(),
+                z = reader.ReadSingle()
+            };
+        }
+
+        #endregion
+
     }
 }

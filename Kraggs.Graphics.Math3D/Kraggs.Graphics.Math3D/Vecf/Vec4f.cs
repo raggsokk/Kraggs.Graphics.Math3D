@@ -13,7 +13,7 @@ namespace Kraggs.Graphics.Math3D
     /// </summary>
     [DebuggerDisplay("[ {x}, {y}, {z}, {w} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vec4f : IEquatable<Vec4f>
+    public partial struct Vec4f : IEquatable<Vec4f>, IGLMath, IGenericStream
     {
         /// <summary>
         /// The x component.
@@ -1126,6 +1126,10 @@ namespace Kraggs.Graphics.Math3D
 
         #region Object Overloads
 
+        /// <summary>
+        /// Computes the hash code of this vector.
+        /// </summary>
+        /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
@@ -1133,6 +1137,10 @@ namespace Kraggs.Graphics.Math3D
             return x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode() ^ w.GetHashCode();
         }
 
+        /// <summary>
+        /// Returns a string representation of this vector.
+        /// </summary>
+        /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string ToString()
@@ -1140,6 +1148,11 @@ namespace Kraggs.Graphics.Math3D
             return string.Format("[{0}, {1}, {2}, {3}]", x, y, z, w);
         }
 
+        /// <summary>
+        /// Compares this vector to another object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool Equals(object obj)
@@ -1150,6 +1163,11 @@ namespace Kraggs.Graphics.Math3D
                 return false;
         }
 
+        /// <summary>
+        /// Compares two vectors with each other.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(Vec4f other)
@@ -1162,5 +1180,113 @@ namespace Kraggs.Graphics.Math3D
         }
 
         #endregion
+
+        #region IGLMath
+
+        /// <summary>
+        /// Returns the dotnet type of this components. 
+        /// </summary>
+        [DebuggerNonUserCode()]
+        Type IGLMath.BaseType
+        {
+            get { return typeof(float); }
+        }
+
+        /// <summary>
+        /// The number of components totaly in this vector.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.ComponentCount
+        {
+            get { return 4; }
+        }
+
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vec4f));
+
+        /// <summary>
+        /// Returns the inmemory size in bytes of this vector. 
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.SizeInBytes
+        {
+            get { return Vec4f.SizeInBytes; }
+        }
+
+        /// <summary>
+        /// Returns the gl enum for base compoenent.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLBaseType
+        {
+            get { return GLConstants.GL_BASE_FLOAT; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL attribute type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLAttributeType
+        {
+            get { return GLConstants.FLOAT_VEC4; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL uniform type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLUniformType
+        {
+            get { return GLConstants.FLOAT_VEC4; }
+        }
+
+        /// <summary>
+        /// Is this a matrix (false)
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMath.IsMatrix
+        {
+            get { return false; }
+        }
+
+        #endregion
+
+        #region IGenericStream Implementation
+
+        /// <summary>
+        /// Writes vec to stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="vec"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void WriteStream(System.IO.BinaryWriter writer, object vec)
+        {
+            Vec4f v = (Vec4f)vec;
+            writer.Write(v.x);
+            writer.Write(v.y);
+            writer.Write(v.z);
+            writer.Write(v.w);
+        }
+
+        /// <summary>
+        /// Reads in a new vector from stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public object ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Vec4f()
+            {
+                x = reader.ReadSingle(),
+                y = reader.ReadSingle(),
+                z = reader.ReadSingle(),
+                w = reader.ReadSingle()
+            };
+        }
+
+        #endregion
+
     }
 }
