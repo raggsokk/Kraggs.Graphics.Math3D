@@ -24,6 +24,18 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         public float y;
 
+        #region Constructors
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec2f(float x, float y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -694,6 +706,30 @@ namespace Kraggs.Graphics.Math3D
         public unsafe static explicit operator IntPtr(Vec2f vec)
         {
             return (IntPtr)(&vec.x);
+        }
+
+        /// <summary>
+        /// Cast a vec3f to a vec2f, loosing z component.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Vec2f(Vec3f vec)
+        {
+            return new Vec2f(vec.x, vec.y);
+        }
+
+        /// <summary>
+        /// Casting a vec4f to a vec3f, loosing z and w components.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Vec2f(Vec4f vec)
+        {
+            return new Vec2f(vec.x, vec.y);
         }
 
         #endregion

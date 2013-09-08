@@ -28,6 +28,39 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         public float z;
 
+        #region Constructors
+
+        /// <summary>
+        /// Constructs a vector from individualy components.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec3f(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        /// <summary>
+        /// Contructs a Vec3f from a Vec2f and a z component.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="z"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec3f(Vec2f vec, float z = 0.0f)
+        {
+            this.x = vec.x;
+            this.y = vec.y;
+            this.z = z;
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -823,6 +856,30 @@ namespace Kraggs.Graphics.Math3D
         public unsafe static explicit operator IntPtr(Vec3f vec)
         {
             return (IntPtr)(&vec.x);
+        }
+
+        /// <summary>
+        /// Creates a vec3f from a vec2f.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Vec3f(Vec2f vec)
+        {
+            return new Vec3f(vec.x, vec.y, 0.0f);
+        }
+        
+        /// <summary>
+        /// Creates a vec3f from a vec4f, ignoring w component completely.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Vec3f(Vec4f vec)
+        {
+            return new Vec3f(vec.x, vec.y, vec.z);
         }
 
         #endregion

@@ -96,20 +96,24 @@ Milestone 7
 		SmoothStep(Vec)
 
 Milestone 8
-	IVector
-		BaseType
-		GLUniformType
-		GLAttributeType
-	IMatrix
-		BaseType
-		GLUniformType
-		GLAttributeType
+	IGLMath
+		BaseType aka dotNetType
+		ComponentCount
+		SizeInBytes
+		GLBaseType aka float, double?
+		GLUniformType aka Vec3, Vec4d
+		GLAttributeType				
+	IGLMatrix : IGLMath
+		ColumnCount
+		RowCount
+		IsSquare?? aka columncount=rowcount
 	Stream Extension
 		ReadVec<T>
 		ReadMat<T>
 	SizeInBytes?
 
-
+Milestone 9
+	Quaternions
 
 Release 1
 	Milestone 1
@@ -123,3 +127,4 @@ Release 2
 Release 3
 	Milestone 7
 	Milestone 8
+	Milestone 9
