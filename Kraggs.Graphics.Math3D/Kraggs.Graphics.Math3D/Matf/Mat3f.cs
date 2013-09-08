@@ -30,6 +30,57 @@ namespace Kraggs.Graphics.Math3D
         public static readonly Mat3f Zero = new Mat3f() { c0 = Vec3f.Zero, c1 = Vec3f.Zero, c2 = Vec3f.Zero };
         public static readonly Mat3f Identity = new Mat3f() { c0 = Vec3f.UnitX, c1 = Vec3f.UnitY, c2 = Vec3f.UnitZ };
 
+        /// <summary>
+        /// Returns the row0 of this matrix.
+        /// It also gives a nice debug view of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec3f Row0
+        {
+            get
+            {
+                return new Vec3f() { x = c0.x, y = c1.x, z = c2.x};
+            }
+        }
+
+        /// <summary>
+        /// Returns the row1 of this matrix.
+        /// It also gives a nice debug view of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec3f Row1
+        {
+            get
+            {
+                return new Vec3f() { x = c0.y, y = c1.y, z = c2.y};
+            }
+        }
+        /// <summary>
+        /// Returns the row2 of this matrix.
+        /// It also gives a nice debug view of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec3f Row2
+        {
+            get
+            {
+                return new Vec3f() { x = c0.z, y = c1.z, z = c2.z};
+            }
+        }
+
+        /// <summary>
+        /// Returns the scale in this matrix as a vec3f
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec3f Scale
+        {
+            get
+            {
+                return new Vec3f() { x = c0.x, y = c1.y, z = c2.z };
+            }
+        }
+
+
         #endregion
 
         #region Constructors
@@ -225,6 +276,42 @@ namespace Kraggs.Graphics.Math3D
             
             //inverse /= determinant;            
 
+            return inverse / determinant;
+        }
+
+        /// <summary>
+        /// Creates a affice Inverse of provided matrix.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat3f AffineInverse(Mat3f m)
+        {
+            Mat3f result = m;
+            result.c2 = Vec3f.UnitZ;
+            result.Transpose();
+            Vec3f translation = result * new Vec3f(-(Vec2f)m.c2, m.c2.z);
+            result.c2 = translation;
+            return result;
+        }
+
+        public static Mat3f InverseTranspose(Mat3f m)
+        {
+            var determinant = m.Determinant;
+
+            Mat3f inverse;
+
+            inverse.c0.x = +(m.c1.y * m.c2.z - m.c2.y * m.c1.z);
+            inverse.c0.y = -(m.c1.x * m.c2.z - m.c2.x * m.c1.z);
+            inverse.c0.z = +(m.c1.x * m.c2.y - m.c2.x * m.c1.y);
+            inverse.c1.x = -(m.c0.y * m.c2.z - m.c2.y * m.c0.z);
+            inverse.c1.y = +(m.c0.x * m.c2.z - m.c2.x * m.c0.z);
+            inverse.c1.z = -(m.c0.x * m.c2.y - m.c2.x * m.c0.y);
+            inverse.c2.x = +(m.c0.y * m.c1.z - m.c1.y * m.c0.z);
+            inverse.c2.y = -(m.c0.x * m.c1.z - m.c1.x * m.c0.z);
+            inverse.c2.z = +(m.c0.x * m.c1.y - m.c1.x * m.c0.y);
+           
             return inverse / determinant;
         }
 
@@ -717,14 +804,14 @@ namespace Kraggs.Graphics.Math3D
         }
 
         /// <summary>
-        /// Implicit conversion from Mat2f to Mat3f with emmpty values taken from identity matrix.
+        /// Explicit conversion from Mat2f to Mat3f with emmpty values taken from identity matrix.
         /// Aka c2.z = 1.0f in this conversion.
         /// </summary>
         /// <param name="m"></param>
         /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Mat3f (Mat2f m)
+        public static explicit operator Mat3f (Mat2f m)
         {
             return new Mat3f()
             {

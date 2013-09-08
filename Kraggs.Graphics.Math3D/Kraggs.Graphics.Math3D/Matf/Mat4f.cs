@@ -34,6 +34,82 @@ namespace Kraggs.Graphics.Math3D
         public static readonly Mat4f Zero = new Mat4f() { c0 = Vec4f.Zero, c1 = Vec4f.Zero, c2 = Vec4f.Zero, c3 = Vec4f.Zero };
         public static readonly Mat4f Identity = new Mat4f() { c0 = Vec4f.UnitX, c1 = Vec4f.UnitY, c2 = Vec4f.UnitZ, c3 = Vec4f.UnitW };
 
+        /// <summary>
+        /// Returns the row0 of this matrix.
+        /// It also gives a nice debug view of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec4f Row0
+        {
+            get
+            {
+                return new Vec4f() { x = c0.x, y = c1.x, z = c2.x, w = c3.x };
+            }
+        }
+
+        /// <summary>
+        /// Returns the row1 of this matrix.
+        /// It also gives a nice debug view of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec4f Row1
+        {
+            get
+            {
+                return new Vec4f() { x = c0.y, y = c1.y, z = c2.y, w = c3.y };
+            }
+        }
+        /// <summary>
+        /// Returns the row2 of this matrix.
+        /// It also gives a nice debug view of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec4f Row2
+        {
+            get
+            {
+                return new Vec4f() { x = c0.z, y = c1.z, z = c2.z, w = c3.z };
+            }
+        }
+        /// <summary>
+        /// Returns the row3 of this matrix.
+        /// It also gives a nice debug view of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec4f Row3
+        {
+            get
+            {
+                return new Vec4f() { x = c0.w, y = c1.w, z = c2.w, w = c3.w };
+            }
+        }
+
+        /// <summary>
+        /// Returns the translation in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]        
+        public Vec3f Translation
+        {
+            get
+            {
+                return new Vec3f() { x = c3.x, y = c3.y, z = c3.z };
+                //return (Vec3f)c3;
+            }
+        }
+
+        /// <summary>
+        /// Returns the scale in this matrix as a vec3f
+        /// TODO: Should this be Vec4f instead?
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec3f Scale
+        {
+            get
+            {
+                return new Vec3f() { x = c0.x, y = c1.y, z = c2.z};
+            }
+        }
+
         #endregion
 
         #region Constructors
@@ -320,6 +396,561 @@ namespace Kraggs.Graphics.Math3D
             
             return inverse / determinant;
 
+        }
+
+        /// <summary>
+        /// Creates a affice Inverse of provided matrix.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f AffineInverse(Mat4f m)
+        {
+            Mat4f result = m;
+            result.c3 = Vec4f.UnitW;
+            result.Transpose();
+            Vec4f translation = result * new Vec4f(-(Vec3f)m.c3, m.c3.w);
+            result.c3 = translation;
+            return result;
+        }
+
+        public static Mat4f InverseTranspose(Mat4f m)
+        {
+            float SubFactor00 = m.c2.z * m.c3.w - m.c3.z * m.c2.w;
+            float SubFactor01 = m.c2.y * m.c3.w - m.c3.y * m.c2.w;
+            float SubFactor02 = m.c2.y * m.c3.z - m.c3.y * m.c2.z;
+            float SubFactor03 = m.c2.x * m.c3.w - m.c3.x * m.c2.w;
+            float SubFactor04 = m.c2.x * m.c3.z - m.c3.x * m.c2.z;
+            float SubFactor05 = m.c2.x * m.c3.y - m.c3.x * m.c2.y;
+            float SubFactor06 = m.c1.z * m.c3.w - m.c3.z * m.c1.w;
+            float SubFactor07 = m.c1.y * m.c3.w - m.c3.y * m.c1.w;
+            float SubFactor08 = m.c1.y * m.c3.z - m.c3.y * m.c1.z;
+            float SubFactor09 = m.c1.x * m.c3.w - m.c3.x * m.c1.w;
+            float SubFactor10 = m.c1.x * m.c3.z - m.c3.x * m.c1.z;
+            float SubFactor11 = m.c1.y * m.c3.w - m.c3.y * m.c1.w;
+            float SubFactor12 = m.c1.x * m.c3.y - m.c3.x * m.c1.y;
+            float SubFactor13 = m.c1.y * m.c2.w - m.c2.z * m.c1.w;
+            float SubFactor14 = m.c1.y * m.c2.w - m.c2.y * m.c1.w;
+            float SubFactor15 = m.c1.y * m.c2.z - m.c2.y * m.c1.z;
+            float SubFactor16 = m.c1.x * m.c2.w - m.c2.x * m.c1.w;
+            float SubFactor17 = m.c1.x * m.c2.z - m.c2.x * m.c1.z;
+            float SubFactor18 = m.c1.x * m.c2.y - m.c2.x * m.c1.y;
+
+            Mat4f inverse;
+
+            inverse.c0.x = +(m.c1.y * SubFactor00 - m.c1.z * SubFactor01 + m.c1.w * SubFactor02);
+            inverse.c0.y = -(m.c1.x * SubFactor00 - m.c1.z * SubFactor03 + m.c1.w * SubFactor04);
+            inverse.c0.z = +(m.c1.x * SubFactor01 - m.c1.y * SubFactor03 + m.c1.w * SubFactor05);
+            inverse.c0.w = -(m.c1.x * SubFactor02 - m.c1.y * SubFactor04 + m.c1.z * SubFactor05);
+
+            inverse.c1.x = -(m.c0.y * SubFactor00 - m.c0.z * SubFactor01 + m.c0.w * SubFactor02);
+            inverse.c1.y = +(m.c0.x * SubFactor00 - m.c0.z * SubFactor03 + m.c0.w * SubFactor04);
+            inverse.c1.z = -(m.c0.x * SubFactor01 - m.c0.y * SubFactor03 + m.c0.w * SubFactor05);
+            inverse.c1.w = +(m.c0.x * SubFactor02 - m.c0.y * SubFactor04 + m.c0.z * SubFactor05);
+
+            inverse.c2.x = +(m.c0.y * SubFactor06 - m.c0.z * SubFactor07 + m.c0.w * SubFactor08);
+            inverse.c2.y = -(m.c0.x * SubFactor06 - m.c0.z * SubFactor09 + m.c0.w * SubFactor10);
+            inverse.c2.z = +(m.c0.x * SubFactor11 - m.c0.y * SubFactor09 + m.c0.w * SubFactor12);
+            inverse.c2.w = -(m.c0.x * SubFactor08 - m.c0.y * SubFactor10 + m.c0.z * SubFactor12);
+
+            inverse.c3.x = -(m.c0.y * SubFactor13 - m.c0.z * SubFactor14 + m.c0.w * SubFactor15);
+            inverse.c3.y = +(m.c0.x * SubFactor13 - m.c0.z * SubFactor16 + m.c0.w * SubFactor17);
+            inverse.c3.z = -(m.c0.x * SubFactor14 - m.c0.y * SubFactor16 + m.c0.w * SubFactor18);
+            inverse.c3.w = +(m.c0.x * SubFactor15 - m.c0.y * SubFactor17 + m.c0.z * SubFactor18);
+
+            float determinant =
+                +m.c0.x * inverse.c0.x
+                + m.c0.y * inverse.c0.y
+                + m.c0.z * inverse.c0.z
+                + m.c0.w * inverse.c0.w;
+
+            return inverse / determinant;
+
+        }
+
+
+        #endregion
+
+        #region Static Transform Functions
+
+        /// <summary>
+        /// Creates a translation 4x4 matrix from a vector of 3 components.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="translation"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateTranslation(Vec3f translation)
+        {
+            Mat4f result = Mat4f.Identity;
+            result.c3 = new Vec4f(translation, 1.0f);
+            return result;
+            //result.c3 =
+            //    Vec4f.UnitX * translation.x +
+            //    Vec4f.UnitY * translation.y +
+            //    Vec4f.UnitZ * translation.z +
+            //    Vec4f.UnitW;
+
+            //return result;
+        }
+
+        //public static Mat4f CreateTranslation(Vec3f translation, Mat4f StartingPoint )
+        //{
+
+        //}
+
+        /// <summary>
+        /// Creates a rotation 4x4 matrix from an axis vector and an angle expressed in degrees.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="angleInDegrees">Rotation angle in degrees.</param>
+        /// <param name="axis">Rotation Axis, recommended to be normalized.</param>
+        /// <returns></returns>
+        public static Mat4f CreateRotation(float angleInDegrees, Vec3f axis)
+        {
+            float a = MathFunctions.Radians(angleInDegrees);
+            float c = (float)Math.Cos(a);
+            float s = (float)Math.Sin(a);
+
+            axis.Normalize();
+
+            Mat4f result = Mat4f.Zero;
+
+            result.c0.x = c + (1 - c) * axis.x * axis.x;
+            result.c0.y = (1 - c) * axis.x * axis.y + s * axis.z;
+            result.c0.z = (1 - c) * axis.x * axis.z - s * axis.y;
+
+            result.c1.x = (1 - c) * axis.y * axis.x - s * axis.z;
+            result.c1.y = c + (1 - c) * axis.y * axis.y;
+            result.c1.z = (1 - c) * axis.y * axis.z + s * axis.x;
+
+            result.c2.x = (1 - c) * axis.z * axis.x + s * axis.y;
+            result.c2.y = (1 - c) * axis.z * axis.y - s * axis.x;
+            result.c2.z = c + (1 - c) * axis.z * axis.z;
+
+            result.c3.w = 1.0f;
+            return result;
+
+
+            //Vec3f temp = (1.0f - c) * axis;
+
+            //// TODO: Remove referenes to seperate Result mat4f. Compute directly into rotate.
+
+            //Mat4f rotate = Mat4f.Zero;
+
+            //rotate.c0.x = c + temp.x * axis.x;
+            //rotate.c0.y = 0 + temp.x * axis.y + s * axis.z;
+            //rotate.c0.z = 0 + temp.x * axis.z - s * axis.y;
+
+            //rotate.c1.x = 0 + temp.y * axis.x - s * axis.z;
+            //rotate.c1.y = 0 + temp.y * axis.y;
+            //rotate.c1.z = 0 + temp.y * axis.z + s * axis.x;
+
+            //rotate.c2.x = 0 + temp.z * axis.x + s * axis.y;
+            //rotate.c2.y = 0 + temp.z * axis.y - s * axis.x;
+            //rotate.c2.z = c + temp.z * axis.z;
+
+            //Mat4f Result = Mat4f.Zero;
+
+            //Result.c0 = Vec4f.UnitX * rotate.c0.x + Vec4f.UnitY * rotate.c0.y + Vec4f.UnitZ * rotate.c0.z;
+            //Result.c1 = Vec4f.UnitX * rotate.c1.x + Vec4f.UnitY * rotate.c1.y + Vec4f.UnitZ * rotate.c1.z;
+            //Result.c2 = Vec4f.UnitX * rotate.c2.x + Vec4f.UnitY * rotate.c2.y + Vec4f.UnitZ * rotate.c2.z;
+            //Result.c3 = Vec4f.UnitW;
+            //return Result;
+
+        }
+
+        /// <summary>
+        /// Creates a rotation around x axix matrix.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="angleInDegrees">Degree to rotate.</param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateRotationX(float angleInDegrees)
+        {
+            float r = MathFunctions.Radians(angleInDegrees);
+            float c = (float)Math.Cos(r);
+            float s = (float)Math.Sin(r);
+
+            Mat4f result = Mat4f.Identity;
+            result.c1.y = c;
+            result.c1.z = s;
+            result.c2.y = -s;
+            result.c2.z = c;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a rotation matrix around Y axis.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="angleInDegrees">Degree to rotate.</param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateRotationY(float angleInDegrees)
+        {
+            float r = MathFunctions.Radians(angleInDegrees);
+            float c = (float)Math.Cos(r);
+            float s = (float)Math.Sin(r);
+
+            Mat4f result = Mat4f.Identity;
+            result.c0.x = c;
+            result.c0.z = -s;
+            result.c2.x = s;
+            result.c2.z = c;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a rotation matrix around z axis.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="angleInDegrees">Degrees to rotate.</param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateRotationZ(float angleInDegrees)
+        {
+            float r = MathFunctions.Radians(angleInDegrees);
+            float c = (float)Math.Cos(r);
+            float s = (float)Math.Sin(r);
+
+            Mat4f result = Mat4f.Identity;
+            result.c0.x = c;
+            result.c0.y = s;
+            result.c1.x = -s;
+            result.c1.y = c;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a scale 4x4 matrix from 3 scalars/Vec3f.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="scale"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateScale(Vec3f scale)
+        {
+            Mat4f result = Mat4f.Zero;
+            result.c0.x = scale.x;
+            result.c1.y = scale.y;
+            result.c2.z = scale.z;
+            result.c3.w = 1.0f;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a matrix for an orthographics parallel viewing volume.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="bottom"></param>
+        /// <param name="top"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateOrtho(float left, float right, float bottom, float top)
+        {
+            Mat4f result = Mat4f.Identity;
+            result.c0.x = 2.0f / (right - left);
+            result.c1.y = 2.0f / (top - bottom);
+            result.c2.z = -1.0f;
+            result.c3.x = -(right + left) / (right - left);
+            result.c3.y = -(top + bottom) / (top - bottom);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a matrix for projecting two-dimensional coordinates onto the screen.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="bottom"></param>
+        /// <param name="top"></param>
+        /// <param name="zNear"></param>
+        /// <param name="zFar"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
+        {
+            Mat4f result = Mat4f.Identity;
+            result.c0.x = 2.0f / (right - left);
+            result.c1.y = 2.0f / (top - bottom);
+            result.c2.z = -2.0f / (zFar - zNear);
+            result.c3.x = -(right + left) / (right - left);
+            result.c3.y = -(top + bottom) / (top - bottom);
+            result.c3.z = -(zFar + zNear) / (zFar - zNear);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a frustrum matrix.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="bottom"></param>
+        /// <param name="top"></param>
+        /// <param name="near"></param>
+        /// <param name="far"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateFrustum(float left, float right, float bottom, float top, float near, float far)
+        {
+            Mat4f result = Mat4f.Zero;
+            result.c0.x = (2.0f * near) / (right - left);
+            result.c1.y = (2.0f * near) / (top - bottom);
+            result.c2.x = (right + left) / (right - left);
+            result.c2.y = (top + bottom) / (top - bottom);
+            result.c2.z = -(far + near) / (far - near);
+            result.c2.w = -1.0f;
+            result.c3.z = -(2.0f * far * near) / (far - near);
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a matrix for a symmetrix perspective-view frustrum.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="fovy"></param>
+        /// <param name="aspect"></param>
+        /// <param name="near"></param>
+        /// <param name="far"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreatePerspective(float fovy, float aspect, float near, float far)
+        {
+            float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            float left = -range * aspect;
+            float right = range * aspect;
+            float bottom = -range;
+            float top = range;
+
+            Mat4f result = Mat4f.Zero;
+            result.c0.x = (2.0f * near) / (right - left);
+            result.c1.y = (2.0f * near) / (top - bottom);
+            result.c2.z = -(far + near) / (far - near);
+            result.c2.w = -1.0f;
+            result.c3.z = -(2.0f * far * near) / (far - near);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a perspective projection matrix based on a field of view.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="fov"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="near"></param>
+        /// <param name="far"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreatePerspectiveFov(float fov, float width, float height, float near, float far)
+        {
+            float rad = MathFunctions.Radians(fov);
+            float h = (float)Math.Cos(0.5f * rad) / (float)Math.Sin(0.5f * rad);
+            float w = h * height / width;
+
+            Mat4f result = Mat4f.Zero;
+            result.c0.x = w;
+            result.c1.y = h;
+            result.c2.z = -(far + near) / (far - near);
+            result.c2.w = -1.0f;
+            result.c3.z = -(2.0f * far * near) / (far - near);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a matrix for symmetric perspective-view frustrum with far plane at infinite.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="fovy"></param>
+        /// <param name="aspect"></param>
+        /// <param name="near"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateInfinitePerspective(float fovy, float aspect, float near)
+        {
+            float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            float left = -range * aspect;
+            float right = range * aspect;
+            float bottom = -range;
+            float top = range;
+
+            Mat4f result = Mat4f.Zero;
+            result.c0.x = (2.0f * near) / (right - left);
+            result.c1.y = (2.0f * near) / (top - bottom);
+            result.c2.z = -1.0f;
+            result.c2.w = -1.0f;
+            result.c3.z = -2.0f * near;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a matrix for a symmetric perspective-view frustrum with far plane at infinite for graphics hardware that doesn't supprt depth clamping.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="fovy"></param>
+        /// <param name="aspect"></param>
+        /// <param name="near"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateTweakedInfinitePerspective(float fovy, float aspect, float near)
+        {
+            float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            float left = -range * aspect;
+            float right = range * aspect;
+            float bottom = -range;
+            float top = range;
+
+            Mat4f result = Mat4f.Zero;
+            result.c0.x = (2.0f * near) / (right - left);
+            result.c1.y = (2.0f * near) / (top - bottom);
+            result.c2.z = 0.0001f - 1.0f;
+            result.c2.w = -1.0f;
+            result.c3.z = -(0.0001f - 2.0f) * near;
+            return result;
+        }
+
+        /// <summary>
+        /// Map the specified object coordinates (obj,x, obj.y, obj.z) into window coordinates.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="model"></param>
+        /// <param name="proj"></param>
+        /// <param name="viewport"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Vec3f Project(Vec3f obj, Mat4f model, Mat4f proj, Vec4f viewport)
+        {
+            Vec4f tmp = new Vec4f(obj, 1.0f);
+            tmp = model * tmp;
+            tmp = proj * tmp;
+
+            tmp /= tmp.w;
+            tmp = tmp * 0.5f + 0.5f;
+            tmp.x = tmp.x * viewport.z + viewport.x;
+            tmp.y = tmp.y * viewport.w + viewport.y;
+
+            return (Vec3f)tmp;
+        }
+
+        /// <summary>
+        /// Maps the specified windows coordinates (win.x, win.y, winz) into object coordinates.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="win"></param>
+        /// <param name="model"></param>
+        /// <param name="proj"></param>
+        /// <param name="viewport"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Vec3f UnProject(Vec3f win, Mat4f model, Mat4f proj, Vec4f viewport)
+        {
+            Mat4f inverse = Mat4f.Inverse(proj * model);
+
+            Vec4f tmp = new Vec4f(win, 1.0f);
+            tmp.x = (tmp.x - viewport.x) / viewport.z;
+            tmp.y = (tmp.y - viewport.y) / viewport.w;
+            tmp = tmp * 2.0f - 1.0f;
+
+            Vec4f obj = inverse * tmp;
+            obj /= obj.w;
+
+            return (Vec3f)obj;
+        }
+
+        /// <summary>
+        /// Creates a picking region.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="center"></param>
+        /// <param name="delta"></param>
+        /// <param name="viewport"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreatePickMatrix(Vec2f center, Vec2f delta, Vec4f viewport)
+        {
+            Debug.Assert(delta.x > 0.0f && delta.y > 0.0f);
+
+            Mat4f result = Mat4f.Identity;
+
+            if (!(delta.x > 0.0f && delta.y > 0.0f))
+                return result; // error.
+
+            Vec3f temp = new Vec3f(
+                (viewport.z - 2.0f * (center.x - viewport.x)) / delta.x,
+                (viewport.w - 2.0f * (center.y - viewport.y)) / delta.y,
+                0.0f);
+
+            // Translate and scale the picked region to the entire window.
+            result = result * CreateTranslation(temp);
+            result = result * CreateScale(new Vec3f(
+                viewport.z / delta.x, viewport.w / delta.y, 1.0f));
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a look at view matrix.
+        /// GLM verified at Milestone6 at 8.sept.2013
+        /// </summary>
+        /// <param name="eye"></param>
+        /// <param name="center"></param>
+        /// <param name="up"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateLookAt(Vec3f eye, Vec3f center, Vec3f up)
+        {
+            Vec3f f = Vec3f.Normalize(center - eye);
+            Vec3f u = Vec3f.Normalize(up);
+            Vec3f s = Vec3f.Normalize(Vec3f.Cross(f, u));
+            u = Vec3f.Cross(s, f);
+
+            Mat4f result = Mat4f.Identity;            
+            result.c0.x = s.x;
+            result.c1.x = s.y;
+            result.c2.x = s.z;
+            result.c0.y = u.x;
+            result.c1.y = u.y;
+            result.c2.y = u.z;
+            result.c0.z = -f.x;
+            result.c1.z = -f.y;
+            result.c2.z = -f.z;
+            result.c3.x = -Vec3f.Dot(s, eye);
+            result.c3.y = -Vec3f.Dot(u, eye);
+            result.c3.z =  Vec3f.Dot(f, eye);
+
+            return result;
         }
 
         #endregion
@@ -834,7 +1465,7 @@ namespace Kraggs.Graphics.Math3D
         /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Mat4f(Mat2f m)
+        public static explicit operator Mat4f(Mat2f m)
         {
             return new Mat4f()
             {
@@ -852,7 +1483,7 @@ namespace Kraggs.Graphics.Math3D
         /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Mat4f(Mat3f m)
+        public static explicit operator Mat4f(Mat3f m)
         {
             return new Mat4f()
             {

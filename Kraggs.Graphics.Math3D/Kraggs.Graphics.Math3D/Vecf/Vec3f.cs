@@ -858,6 +858,30 @@ namespace Kraggs.Graphics.Math3D
             return (IntPtr)(&vec.x);
         }
 
+        /// <summary>
+        /// Creates a vec3f from a vec2f.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Vec3f(Vec2f vec)
+        {
+            return new Vec3f(vec.x, vec.y, 0.0f);
+        }
+        
+        /// <summary>
+        /// Creates a vec3f from a vec4f, ignoring w component completely.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Vec3f(Vec4f vec)
+        {
+            return new Vec3f(vec.x, vec.y, vec.z);
+        }
+
         #endregion
 
         #region Object Overloads

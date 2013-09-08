@@ -27,6 +27,33 @@ namespace Kraggs.Graphics.Math3D
         public static readonly Mat2f Zero = new Mat2f() { c0 = Vec2f.Zero, c1 = Vec2f.Zero };
         public static readonly Mat2f Identity = new Mat2f() { c0 = Vec2f.UnitX, c1 = Vec2f.UnitY };
 
+        /// <summary>
+        /// Returns the row0 of this matrix.
+        /// It also gives a nice debug view of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec2f Row0
+        {
+            get
+            {
+                return new Vec2f() { x = c0.x, y = c1.x};
+            }
+        }
+
+        /// <summary>
+        /// Returns the row1 of this matrix.
+        /// It also gives a nice debug view of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        public Vec2f Row1
+        {
+            get
+            {
+                return new Vec2f() { x = c0.y, y = c1.y};
+            }
+        }
+
+
         #endregion
 
         #region Constructors
@@ -170,6 +197,19 @@ namespace Kraggs.Graphics.Math3D
                 - m.c1.x / determinant,
                 + m.c0.x / determinant
             );
+
+            return inverse;
+        }
+
+        public static Mat2f InverseTranspose(Mat2f m)
+        {
+            var determinant = m.Determinant;
+
+            Mat2f inverse = new Mat2f(
+                +m.c1.y / determinant,
+                -m.c0.y / determinant,
+                -m.c1.x / determinant,
+                +m.c0.x / determinant);
 
             return inverse;
         }
@@ -604,6 +644,30 @@ namespace Kraggs.Graphics.Math3D
                 left.c0.y != right.c0.y ||
                 left.c1.x != right.c1.x ||
                 left.c1.y != right.c1.y;
+        }
+
+        /// <summary>
+        /// Explicit conversion of a mat3f to a mat2f with dataloss.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Mat2f(Mat3f m)
+        {
+            return new Mat2f(m.c0.x, m.c0.y, m.c1.x, m.c1.y);
+        }
+
+        /// <summary>
+        /// Explicit conversion of a mat4f to a mat2f with major dataloss.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator Mat2f(Mat4f m)
+        {
+            return new Mat2f(m.c0.x, m.c0.y, m.c1.x, m.c1.y);
         }
 
         #endregion

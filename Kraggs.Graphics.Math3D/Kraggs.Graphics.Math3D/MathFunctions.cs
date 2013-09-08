@@ -110,5 +110,27 @@ namespace Kraggs.Graphics.Math3D
         }
 
         #endregion
+
+        #region Trigonometric
+
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Radians(float degrees)
+        {
+            const float pi = 3.1415926535897932384626433832795f;
+
+            return degrees * (pi / 180.0f);
+        }
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Degrees(float radians)
+        {
+            const float pi = 3.1415926535897932384626433832795f;
+
+            return radians * 180.0f / pi;
+            
+        }
+
+        #endregion
     }
 }
