@@ -50,6 +50,7 @@
     <Compile Include="Matf\Mat4f.cs" />
     <Compile Include="MathFunctions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quaternion\Quatf.cs" />
     <Compile Include="StreamExtensions\StreamExtensions.cs" />
     <Compile Include="Vecf\Vec2f.cs" />
     <Compile Include="Vecf\Vec3f.cs" />

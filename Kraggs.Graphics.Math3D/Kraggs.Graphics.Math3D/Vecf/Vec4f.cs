@@ -130,6 +130,7 @@ namespace Kraggs.Graphics.Math3D
             this.x = x * f;
             this.y = y * f;
             this.z = z * f;
+            this.w = w * f;
         }
 
         /// <summary>

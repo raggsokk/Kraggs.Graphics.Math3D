@@ -127,8 +127,67 @@ namespace Kraggs.Graphics.Math3D
         {
             const float pi = 3.1415926535897932384626433832795f;
 
-            return radians * 180.0f / pi;
-            
+            return radians * 180.0f / pi;            
+        }
+
+        public static Vec2f Sin(Vec2f radians)
+        {
+            return new Vec2f()
+            {
+                x = (float)Math.Sin(radians.x),
+                y = (float)Math.Sin(radians.y)
+            };
+        }
+
+        public static Vec2f Cos(Vec2f radians)
+        {
+            return new Vec2f()
+            {
+                x = (float)Math.Cos(radians.x),
+                y = (float)Math.Cos(radians.y)
+            };
+        }
+
+        public static Vec3f Sin(Vec3f radians)
+        {
+            return new Vec3f()
+            {
+                x = (float)Math.Sin(radians.x),
+                y = (float)Math.Sin(radians.y),
+                z = (float)Math.Sin(radians.z)
+            };
+        }
+
+        public static Vec3f Cos(Vec3f radians)
+        {
+            return new Vec3f()
+            {
+                x = (float)Math.Cos(radians.x),
+                y = (float)Math.Cos(radians.y),
+                z = (float)Math.Sin(radians.z)
+            };
+        }
+
+        public static Vec4f Sin(Vec4f radians)
+        {
+            return new Vec4f()
+            {
+                x = (float)Math.Sin(radians.x),
+                y = (float)Math.Sin(radians.y),
+                z = (float)Math.Sin(radians.z),
+                w = (float)Math.Sin(radians.w)
+            };
+        }
+
+        public static Vec4f Cos(Vec4f radians)
+        {
+            return new Vec4f()
+            {
+                x = (float)Math.Cos(radians.x),
+                y = (float)Math.Cos(radians.y),
+                z = (float)Math.Sin(radians.z),
+                w = (float)Math.Cos(radians.w)
+            };
         }
 
         #endregion
