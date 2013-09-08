@@ -132,5 +132,80 @@ namespace Kraggs.Graphics.Math3D
         }
 
         #endregion
+
+        #region Other Math Functions // nice name?
+
+        /// <summary>
+        /// Clamps x between min and max.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp(float x, float min, float max)
+        {
+            return Math.Max(Math.Min(x, max), min);
+        }
+
+        /// <summary>
+        /// returns a mix of two floats with mix factor in a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Mix(float x, float y, float a)
+        {
+            return x + a * (y - x);
+        }
+        /// <summary>
+        /// Returns either x or y dependent on a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Mix(float x, float y, bool a)
+        {
+            return a ? y : x;
+            //return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// step generates a step function by comparing x to edge.
+        /// For element i of the return value, 0.0 is returned if x[i] < edge[i], and 1.0 is returned otherwise.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Step(float edge, float x)
+        {
+            return x < edge ? 0.0f : 1.0f;
+        }
+
+        /// <summary>
+        /// perform Hermite interpolation between two values
+        /// </summary>
+        /// <param name="edge0"></param>
+        /// <param name="edge1"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float SmoothStep(float edge0, float edge1, float x)
+        {
+            float tmp = Clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+            return tmp * tmp * (3.0f - 2.0f * tmp);
+        }
+
+        #endregion
     }
 }

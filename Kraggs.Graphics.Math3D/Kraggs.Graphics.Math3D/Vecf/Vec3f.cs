@@ -348,6 +348,254 @@ namespace Kraggs.Graphics.Math3D
             result = a * MathFunctions.FastInverseSqrt(b) * c;
         }
 
+        /// <summary>
+        /// Clamps the components of a vector to between min and max.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Clamp(Vec3f x, float min, float max)
+        {
+            return new Vec3f()
+            {
+                x = MathFunctions.Clamp(x.x, min, max),
+                y = MathFunctions.Clamp(x.y, min, max),
+                z = MathFunctions.Clamp(x.z, min, max)
+            };
+        }
+
+        /// <summary>
+        /// Clamps the components of a vector to between min and max.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Clamp(Vec3f x, Vec3f min, Vec3f max)
+        {
+            return new Vec3f()
+            {
+                x = MathFunctions.Clamp(x.x, min.x, max.x),
+                y = MathFunctions.Clamp(x.y, min.y, max.y),
+                z = MathFunctions.Clamp(x.z, min.z, max.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns a mix of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Mix(Vec3f x, Vec3f y, float a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// Returns a mix of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Mix(Vec3f x, Vec3f y, Vec3f a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// step generates a step function by comparing x to edge.
+        /// For element i of the return value, 0.0 is returned if x[i] < edge[i], and 1.0 is returned otherwise.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Step(float edge, Vec3f x)
+        {
+            return new Vec3f()
+            {
+                x = x.x < edge ? 0.0f : 1.0f,
+                y = x.y < edge ? 0.0f : 1.0f,
+                z = x.z < edge ? 0.0f : 1.0f
+            };
+        }
+
+        /// <summary>
+        /// step generates a step function by comparing x to edge.
+        /// For element i of the return value, 0.0 is returned if x[i] gt edge[i], and 1.0 is returned otherwise.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Step(Vec3f edge, Vec3f x)
+        {
+            return new Vec3f()
+            {
+                x = x.x < edge.x ? 0.0f : 1.0f,
+                y = x.y < edge.y ? 0.0f : 1.0f,
+                z = x.z < edge.z ? 0.0f : 1.0f
+            };
+        }
+
+        /// <summary>
+        /// perform Hermite interpolation between two values
+        /// </summary>
+        /// <param name="edge0"></param>
+        /// <param name="edge1"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f SmoothStep(float edge0, float edge1, Vec3f x)
+        {
+            return new Vec3f()
+            {
+                x = MathFunctions.SmoothStep(edge0, edge1, x.x),
+                y = MathFunctions.SmoothStep(edge0, edge1, x.y),
+                z = MathFunctions.SmoothStep(edge0, edge1, x.z)
+            };
+        }
+
+        /// <summary>
+        /// perform Hermite interpolation between two values
+        /// </summary>
+        /// <param name="edge0"></param>
+        /// <param name="edge1"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f SmoothStep(Vec3f edge0, Vec3f edge1, Vec3f x)
+        {
+            return new Vec3f()
+            {
+                x = MathFunctions.SmoothStep(edge0.x, edge1.x, x.x),
+                y = MathFunctions.SmoothStep(edge0.y, edge1.y, x.y),
+                z = MathFunctions.SmoothStep(edge0.z, edge1.z, x.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns the abolute value of a vector.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Abs(Vec3f v)
+        {
+            return new Vec3f()
+            {
+                x = Math.Abs(v.x),
+                y = Math.Abs(v.y),
+                z = Math.Abs(v.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns the smalles integral value that is greater than or equal to the specified number.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Ceiling(Vec3f v)
+        {
+            return new Vec3f()
+            {
+                x = (float)Math.Ceiling(v.x),
+                y = (float)Math.Ceiling(v.y),
+                z = (float)Math.Ceiling(v.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns the largest value less than or equal to the specified number
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Floor(Vec3f v)
+        {
+            return new Vec3f()
+            {
+                x = (float)Math.Floor(v.x),
+                y = (float)Math.Floor(v.y),
+                z = (float)Math.Floor(v.z)
+            };
+        }
+
+        /// <summary>
+        /// Calculates the integral component parts of a specified vector.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Truncate(Vec3f v)
+        {
+            return new Vec3f()
+            {
+                x = (float)Math.Truncate(v.x),
+                y = (float)Math.Truncate(v.y),
+                z = (float)Math.Truncate(v.z)
+            };
+        }
+
+
+        /// <summary>
+        /// Returns the larger components of two vectors.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Max(Vec3f left, Vec3f right)
+        {
+            return new Vec3f()
+            {
+                x = Math.Max(left.x, right.x),
+                y = Math.Max(left.y, right.y),
+                z = Math.Max(left.z, right.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns the smallest components of two vectors.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Min(Vec3f left, Vec3f right)
+        {
+            return new Vec3f()
+            {
+                x = Math.Min(left.x, right.x),
+                y = Math.Min(left.y, right.y),
+                z = Math.Min(left.z, right.z)
+            };
+        }
+
+
         #endregion
 
         #region Static Arithmetic Functions

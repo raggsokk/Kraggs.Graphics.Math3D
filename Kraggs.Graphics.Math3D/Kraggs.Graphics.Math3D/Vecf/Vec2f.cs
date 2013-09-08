@@ -206,7 +206,6 @@ namespace Kraggs.Graphics.Math3D
             // return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
         }
 
-
         //[DebuggerNonUserCode()]
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
         //public static Vec2f Cross(Vec2f left, Vec2f right)
@@ -214,6 +213,241 @@ namespace Kraggs.Graphics.Math3D
         //    //return new Vec2f
         //    throw new NotImplementedException();
         //}
+
+        /// <summary>
+        /// Clamps the components of a vector to between min and max.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Clamp(Vec2f x, float min, float max)
+        {
+            return new Vec2f()
+            {
+                x = MathFunctions.Clamp(x.x, min, max),
+                y = MathFunctions.Clamp(x.y, min, max)
+            };
+        }
+
+        /// <summary>
+        /// Clamps the components of a vector to between min and max.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Clamp(Vec2f x, Vec2f min, Vec2f max)
+        {
+            return new Vec2f()
+            {
+                x = MathFunctions.Clamp(x.x, min.x, max.x),
+                y = MathFunctions.Clamp(x.y, min.y, max.y)
+            };
+        }
+
+        /// <summary>
+        /// Returns a mix of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Mix(Vec2f x, Vec2f y, float a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// Returns a mix of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Mix(Vec2f x, Vec2f y, Vec2f a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// step generates a step function by comparing x to edge.
+        /// For element i of the return value, 0.0 is returned if x[i] < edge[i], and 1.0 is returned otherwise.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Step(float edge, Vec2f x)
+        {
+            return new Vec2f()
+            {
+                x = x.x < edge ? 0.0f : 1.0f,
+                y = x.y < edge ? 0.0f : 1.0f
+            };
+        }
+
+        /// <summary>
+        /// step generates a step function by comparing x to edge.
+        /// For element i of the return value, 0.0 is returned if x[i] < edge[i], and 1.0 is returned otherwise.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Step(Vec2f edge, Vec2f x)
+        {
+            return new Vec2f()
+            {
+                x = x.x < edge.x ? 0.0f : 1.0f,
+                y = x.y < edge.y ? 0.0f : 1.0f
+            };
+        }
+
+        /// <summary>
+        /// perform Hermite interpolation between two values
+        /// </summary>
+        /// <param name="edge0"></param>
+        /// <param name="edge1"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f SmoothStep(float edge0, float edge1, Vec2f x)
+        {
+            return new Vec2f()
+            {
+                x = MathFunctions.SmoothStep(edge0, edge1, x.x),
+                y = MathFunctions.SmoothStep(edge0, edge1, x.y)
+            };
+        }
+
+        /// <summary>
+        /// perform Hermite interpolation between two values
+        /// </summary>
+        /// <param name="edge0"></param>
+        /// <param name="edge1"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f SmoothStep(Vec2f edge0, Vec2f edge1, Vec2f x)
+        {
+            return new Vec2f()
+            {
+                x = MathFunctions.SmoothStep(edge0.x, edge1.x, x.x),
+                y = MathFunctions.SmoothStep(edge0.y, edge1.y, x.y)
+            };
+        }
+
+        /// <summary>
+        /// Returns the abolute value of a vector.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Abs(Vec2f v)
+        {            
+            return new Vec2f()
+            {
+                x = Math.Abs(v.x),
+                y = Math.Abs(v.y)
+            };
+        }
+
+        /// <summary>
+        /// Returns the smalles integral value that is greater than or equal to the specified number.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Ceiling(Vec2f v)
+        {            
+            return new Vec2f()
+            {
+                x = (float)Math.Ceiling(v.x),
+                y = (float)Math.Ceiling(v.y)
+            };
+        }
+
+        /// <summary>
+        /// Returns the largest value less than or equal to the specified number
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Floor(Vec2f v)
+        {
+            return new Vec2f()
+            {
+                x = (float)Math.Floor(v.x),
+                y = (float)Math.Floor(v.y)
+            };
+        }
+
+        /// <summary>
+        /// Calculates the integral component parts of a specified vector.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Truncate(Vec2f v)
+        {
+            return new Vec2f()
+            {
+                x = (float)Math.Truncate(v.x),
+                y = (float)Math.Truncate(v.y)
+            };
+        }
+
+        /// <summary>
+        /// Returns the larger components of two vectors.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Max(Vec2f left, Vec2f right)
+        {            
+            return new Vec2f()
+            {
+                x = Math.Max(left.x, right.x),
+                y = Math.Max(left.y, right.y)
+            };
+        }
+
+        /// <summary>
+        /// Returns the smallest components of two vectors.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Min(Vec2f left, Vec2f right)
+        {
+            return new Vec2f()
+            {
+                x = Math.Min(left.x, right.x),
+                y = Math.Min(left.y, right.y)
+            };
+        }
+
 
         #endregion
 

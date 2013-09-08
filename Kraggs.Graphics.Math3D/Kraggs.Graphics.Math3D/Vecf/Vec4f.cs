@@ -337,6 +337,265 @@ namespace Kraggs.Graphics.Math3D
             // return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
         }
 
+        /// <summary>
+        /// Clamps the components of a vector to between min and max.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Clamp(Vec4f x, float min, float max)
+        {
+            return new Vec4f()
+            {
+                x = MathFunctions.Clamp(x.x, min, max),
+                y = MathFunctions.Clamp(x.y, min, max),
+                z = MathFunctions.Clamp(x.z, min, max),
+                w = MathFunctions.Clamp(x.w, min, max)
+            };
+        }
+
+        /// <summary>
+        /// Clamps the components of a vector to between min and max.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Clamp(Vec4f x, Vec4f min, Vec4f max)
+        {
+            return new Vec4f()
+            {
+                x = MathFunctions.Clamp(x.x, min.x, max.x),
+                y = MathFunctions.Clamp(x.y, min.y, max.y),
+                z = MathFunctions.Clamp(x.z, min.z, max.z),
+                w = MathFunctions.Clamp(x.w, min.w, max.w)
+            };
+        }
+
+        /// <summary>
+        /// Returns a mix of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Mix(Vec4f x, Vec4f y, float a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// Returns a mix of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Mix(Vec4f x, Vec4f y, Vec4f a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// step generates a step function by comparing x to edge.
+        /// For element i of the return value, 0.0 is returned if x[i] gt edge[i], and 1.0 is returned otherwise.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Step(float edge, Vec4f x)
+        {
+            return new Vec4f()
+            {
+                x = x.x < edge ? 0.0f : 1.0f,
+                y = x.y < edge ? 0.0f : 1.0f,
+                z = x.z < edge ? 0.0f : 1.0f,
+                w = x.w < edge ? 0.0f : 1.0f
+            };
+        }
+
+        /// <summary>
+        /// step generates a step function by comparing x to edge.
+        /// For element i of the return value, 0.0 is returned if x[i] gt edge[i], and 1.0 is returned otherwise.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Step(Vec4f edge, Vec4f x)
+        {
+            return new Vec4f()
+            {
+                x = x.x < edge.x ? 0.0f : 1.0f,
+                y = x.y < edge.y ? 0.0f : 1.0f,
+                z = x.z < edge.z ? 0.0f : 1.0f,
+                w = x.w < edge.w ? 0.0f : 1.0f
+            };
+        }
+
+        /// <summary>
+        /// perform Hermite interpolation between two values
+        /// </summary>
+        /// <param name="edge0"></param>
+        /// <param name="edge1"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f SmoothStep(float edge0, float edge1, Vec4f x)
+        {
+            return new Vec4f()
+            {
+                x = MathFunctions.SmoothStep(edge0, edge1, x.x),
+                y = MathFunctions.SmoothStep(edge0, edge1, x.y),
+                z = MathFunctions.SmoothStep(edge0, edge1, x.z),
+                w = MathFunctions.SmoothStep(edge0, edge1, x.w)
+            };
+        }
+
+        /// <summary>
+        /// perform Hermite interpolation between two values
+        /// </summary>
+        /// <param name="edge0"></param>
+        /// <param name="edge1"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f SmoothStep(Vec4f edge0, Vec4f edge1, Vec4f x)
+        {
+            return new Vec4f()
+            {
+                x = MathFunctions.SmoothStep(edge0.x, edge1.x, x.x),
+                y = MathFunctions.SmoothStep(edge0.y, edge1.y, x.y),
+                z = MathFunctions.SmoothStep(edge0.z, edge1.z, x.z),
+                w = MathFunctions.SmoothStep(edge0.w, edge1.w, x.w)
+            };
+            
+        }
+
+        /// <summary>
+        /// Returns the abolute value of a vector.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Abs(Vec4f v)
+        {
+            return new Vec4f()
+            {
+                x = Math.Abs(v.x),
+                y = Math.Abs(v.y),
+                z = Math.Abs(v.z),
+                w = Math.Abs(v.w)
+            };
+        }
+
+        /// <summary>
+        /// Returns the smalles integral value that is greater than or equal to the specified number.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Ceiling(Vec4f v)
+        {
+            return new Vec4f()
+            {
+                x = (float)Math.Ceiling(v.x),
+                y = (float)Math.Ceiling(v.y),
+                z = (float)Math.Ceiling(v.z),
+                w = (float)Math.Ceiling(v.w)
+            };
+        }
+
+        /// <summary>
+        /// Returns the largest value less than or equal to the specified number
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Floor(Vec4f v)
+        {
+            return new Vec4f()
+            {
+                x = (float)Math.Floor(v.x),
+                y = (float)Math.Floor(v.y),
+                z = (float)Math.Floor(v.z),
+                w = (float)Math.Floor(v.w)
+            };
+        }
+
+        /// <summary>
+        /// Calculates the integral component parts of a specified vector.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Truncate(Vec4f v)
+        {
+            return new Vec4f()
+            {
+                x = (float)Math.Truncate(v.x),
+                y = (float)Math.Truncate(v.y),
+                z = (float)Math.Truncate(v.z),
+                w = (float)Math.Truncate(v.w)
+            };
+        }
+
+        /// <summary>
+        /// Returns the larger components of two vectors.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Max(Vec4f left, Vec4f right)
+        {
+            return new Vec4f()
+            {
+                x = Math.Max(left.x, right.x),
+                y = Math.Max(left.y, right.y),
+                z = Math.Max(left.z, right.z),
+                w = Math.Max(left.w, right.w)
+            };
+        }
+
+        /// <summary>
+        /// Returns the smallest components of two vectors.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Min(Vec4f left, Vec4f right)
+        {
+            return new Vec4f()
+            {
+                x = Math.Min(left.x, right.x),
+                y = Math.Min(left.y, right.y),
+                z = Math.Min(left.z, right.z),
+                w = Math.Min(left.w, right.w)
+            };
+        }
+
 
         #endregion
 
