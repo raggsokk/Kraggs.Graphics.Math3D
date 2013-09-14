@@ -955,6 +955,268 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
+        #region Static EulerAngles
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from an euler angle X.
+        /// </summary>
+        /// <param name="AngleX"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateEulerAngleX(float AngleX)
+        {
+            float cosX = (float)Math.Cos(AngleX);
+            float sinX = (float)Math.Sin(AngleX);
+
+            return new Mat4f(
+                1.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, cosX, sinX, 0.0f,
+                0.0f, -sinX, cosX, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f
+                );
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from an euler angle Y.
+        /// </summary>
+        /// <param name="AngleY"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateEulerAngleY(float AngleY)
+        {
+            float cosY = (float)Math.Cos(AngleY);
+            float sinY = (float)Math.Sin(AngleY);
+
+            return new Mat4f(
+                    cosY, 0.0f, sinY, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f,
+                    -sinY, 0.0f, cosY, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                );
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from an euler angle Z.
+        /// </summary>
+        /// <param name="AngleZ"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateEulerAngleZ(float AngleZ)
+        {
+            float cosZ = (float)Math.Cos(AngleZ);
+            float sinZ = (float)Math.Sin(AngleZ);
+
+            return new Mat4f(
+                    cosZ, sinZ, 0.0f, 0.0f,
+                    -sinZ, cosZ, 0.0f, 0.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                );
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (X * Y).
+        /// </summary>
+        /// <param name="AngleX"></param>
+        /// <param name="AngleY"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateEulerAngleXY(float AngleX, float AngleY)
+        {
+            float cosX = (float)Math.Cos(AngleX);
+            float sinX = (float)Math.Sin(AngleX);
+            float cosY = (float)Math.Cos(AngleY);
+            float sinY = (float)Math.Sin(AngleY);
+
+            return new Mat4f(
+                    cosY, -sinX * sinY, cosX * sinY, 0.0f,
+                    0.0f,  cosX,      sinX,          0.0f,
+                    -sinY, -sinX * cosY, cosX * cosY, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                );
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * X).
+        /// </summary>
+        /// <param name="AngleY"></param>
+        /// <param name="AngleX"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleYX(float AngleY, float AngleX)
+        {
+            float cosX = (float)Math.Cos(AngleX);
+            float sinX = (float)Math.Sin(AngleX);
+            float cosY = (float)Math.Cos(AngleY);
+            float sinY = (float)Math.Sin(AngleY);
+
+            return new Mat4f(
+                    cosY, 0.0f, sinY, 0.0f,
+                    -sinX * sinY, cosX, sinX * cosY, 0.0f,
+                    -cosX * sinY, -sinX, cosX * cosY, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                );
+
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (X * Z).
+        /// </summary>
+        /// <param name="AngleX"></param>
+        /// <param name="AngleZ"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleXZ(float AngleX, float AngleZ)
+        {
+            return CreateEulerAngleX(AngleX) * CreateEulerAngleZ(AngleZ);
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Z * X).
+        /// </summary>
+        /// <param name="AngleZ"></param>
+        /// <param name="AngleX"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleZX(float AngleZ, float AngleX)
+        {
+            return CreateEulerAngleZ(AngleZ) * CreateEulerAngleX(AngleX);
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * Z).
+        /// </summary>
+        /// <param name="AngleY"></param>
+        /// <param name="AngleZ"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleYZ(float AngleY, float AngleZ)
+        {
+            float cosY = (float)Math.Cos(AngleY);
+            float sinY = (float)Math.Sin(AngleY);
+            float cosZ = (float)Math.Cos(AngleZ);
+            float sinZ = (float)Math.Sin(AngleZ);
+
+            throw new NotImplementedException();
+
+            return new Mat4f(
+
+                );
+
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Z * Y).
+        /// </summary>
+        /// <param name="AngleZ"></param>
+        /// <param name="AngleY"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleZY(float AngleZ, float AngleY)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * X * Z).
+        /// CreateYawPitchRoll and CreateEulerAngleYXZ are the same result.
+        /// </summary>
+        /// <param name="yaw"></param>
+        /// <param name="pitch"></param>
+        /// <param name="roll"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleYXZ(float yaw, float pitch, float roll)
+        {
+            float tmp_ch = (float)Math.Cos(yaw);
+            float tmp_sh = (float)Math.Sin(yaw);
+            float tmp_cp = (float)Math.Cos(pitch);
+            float tmp_sp = (float)Math.Sin(pitch);
+            float tmp_cb = (float)Math.Cos(roll);
+            float tmp_sb = (float)Math.Sin(roll);
+
+            Mat4f result; // = Mat4f.Zero;
+            result.c0.x = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
+            result.c0.y = tmp_sb * tmp_cp;
+            result.c0.z = -tmp_sh * tmp_cb + tmp_ch * tmp_sp * tmp_sb;
+            result.c0.w = 0.0f;
+            result.c1.x = -tmp_ch * tmp_sb + tmp_sh * tmp_sp * tmp_cb;
+            result.c1.y = tmp_cb * tmp_cp;
+            result.c1.z = tmp_sb * tmp_sh + tmp_ch * tmp_sp * tmp_cb;
+            result.c1.w = 0.0f;
+            result.c2.x = tmp_sh * tmp_cp;
+            result.c2.y = -tmp_sp;
+            result.c2.z = tmp_ch * tmp_cp;
+            result.c2.w = 0.0f;
+
+            result.c3 = Vec4f.UnitW;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * X * Z).
+        /// CreateYawPitchRoll and CreateEulerAngleYXZ are the same result.
+        /// </summary>
+        /// <param name="yaw"></param>
+        /// <param name="pitch"></param>
+        /// <param name="roll"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateYawPitchRoll(float yaw, float pitch, float roll)
+        {
+            float tmp_ch = (float)Math.Cos(yaw);
+            float tmp_sh = (float)Math.Sin(yaw);
+            float tmp_cp = (float)Math.Cos(pitch);
+            float tmp_sp = (float)Math.Sin(pitch);
+            float tmp_cb = (float)Math.Cos(roll);
+            float tmp_sb = (float)Math.Sin(roll);
+
+            Mat4f result; // = Mat4f.Zero;
+            result.c0.x = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
+            result.c0.y = tmp_sb * tmp_cp;
+            result.c0.z = -tmp_sh * tmp_cb + tmp_ch * tmp_sp * tmp_sb;
+            result.c0.w = 0.0f;
+            result.c1.x = -tmp_ch * tmp_sb + tmp_sh * tmp_sp * tmp_cb;
+            result.c1.y = tmp_cb * tmp_cp;
+            result.c1.z = tmp_sb * tmp_sh + tmp_ch * tmp_sp * tmp_cb;
+            result.c1.w = 0.0f;
+            result.c2.x = tmp_sh * tmp_cp;
+            result.c2.y = -tmp_sp;
+            result.c2.z = tmp_ch * tmp_cp;
+            result.c2.w = 0.0f;
+
+            result.c3 = Vec4f.UnitW;
+
+            return result;
+
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * X * Z).
+        /// </summary>
+        /// <param name="angles"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateOrientate4(Vec3f angles)
+        {
+            return CreateYawPitchRoll(angles.z, angles.x, angles.y);
+        }
+
+        #endregion
+
         #region Static Arithmetic Functions
 
         /// <summary>

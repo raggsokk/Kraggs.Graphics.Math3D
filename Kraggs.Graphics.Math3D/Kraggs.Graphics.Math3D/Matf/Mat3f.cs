@@ -317,7 +317,48 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
-        #region Static Arithmetic Functions        
+        #region Euler Angles
+
+        /// <summary>
+        /// Creates a 3D 3 * 3 homogeneous rotation matrix from an euler angle.
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat3f CreateOrientate3(float angle)
+        {
+            float c = (float)Math.Cos(angle);
+            float s = (float)Math.Cos(angle);
+
+            Mat3f result;
+            result.c0.x = c;
+            result.c0.y = s;
+            result.c0.z = 0.0f;
+            result.c1.x = -s;
+            result.c1.y = c;
+            result.c1.z = 0.0f;
+            result.c2 = Vec3f.UnitZ;
+
+            return result;
+
+        }
+
+        /// <summary>
+        /// Creates a 3D 3 * 3 rotation matrix from euler angles (Y * X * Z).
+        /// </summary>
+        /// <param name="angles"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat3f CreateOrientate3(Vec3f angles)
+        {
+            return (Mat3f)(Mat4f.CreateYawPitchRoll(angles.x, angles.y, angles.z));
+        }
+
+        #endregion
+
+        #region Static Arithmetic Functions
 
         /// <summary>
         /// Adds two matrices component wise.

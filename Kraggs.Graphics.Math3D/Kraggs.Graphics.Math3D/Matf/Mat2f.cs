@@ -216,6 +216,32 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
+        #region Euler Angles
+
+        /// <summary>
+        /// Creates a 2D 2 * 2 rotation matrix from an euler angle.
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat2f CreateOrientate2(float angle)
+        {
+            float c = (float)Math.Cos(angle);
+            float s = (float)Math.Cos(angle);
+
+            Mat2f result;
+            result.c0.x = c;
+            result.c0.y = s;
+            result.c1.x = -s;
+            result.c1.y = c;
+
+            return result;
+        }
+
+        #endregion
+
+
         #region Static Arithmetic Functions
 
         /// <summary>
