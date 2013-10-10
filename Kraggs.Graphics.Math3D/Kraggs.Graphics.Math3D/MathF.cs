@@ -122,6 +122,34 @@ namespace Kraggs.Graphics.Math3D
             return tmp * tmp * (3.0f - 2.0f * tmp);
         }
 
+        /// <summary>
+        /// Higher Multiple number of Source.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="Multiple"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float HigherMultiple(float source, float Multiple)
+        {
+            int tmp = (int)source % (int)Multiple;
+            return tmp != 0 ? source + Multiple - (float)tmp : source;
+        }
+
+        /// <summary>
+        /// Lower Multiple number of Source.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="Multiple"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float LowerMultiple(float source, float Multiple)
+        {
+            int tmp = (int)source % (int)Multiple;
+            return tmp != 0 ? source - (float)tmp : source;
+        }
+
 
         #endregion        
 

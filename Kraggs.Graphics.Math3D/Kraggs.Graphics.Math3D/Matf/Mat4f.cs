@@ -1754,9 +1754,9 @@ namespace Kraggs.Graphics.Math3D
         {
             return new Mat4f()
             {
-                c0 = new Vec4f(m.c0),
-                c1 = new Vec4f(m.c1),
-                c2 = new Vec4f(m.c2),
+                c0 = new Vec4f(m.c0, 0.0f),
+                c1 = new Vec4f(m.c1, 0.0f),
+                c2 = new Vec4f(m.c2, 0.0f),
                 c3 = Vec4f.UnitW,
             };
         }

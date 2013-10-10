@@ -495,8 +495,8 @@ namespace Kraggs.Graphics.Math3D
         {            
             return new Vec2f()
             {
-                x = Math.Max(left.x, right.x),
-                y = Math.Max(left.y, right.y)
+                x = MathF.Max(left.x, right.x),
+                y = MathF.Max(left.y, right.y)
             };
         }
 
@@ -512,9 +512,59 @@ namespace Kraggs.Graphics.Math3D
         {
             return new Vec2f()
             {
-                x = Math.Min(left.x, right.x),
-                y = Math.Min(left.y, right.y)
+                x = MathF.Min(left.x, right.x),
+                y = MathF.Min(left.y, right.y)
             };
+        }
+
+        /// <summary>
+        /// Returns the result of all components multiplied.
+        /// aka x * y
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentMultiply(Vec2f vec)
+        {
+            return 1.0f * vec.x * vec.y;
+        }
+
+        /// <summary>
+        /// Returns the sum of all the components.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentAdd(Vec2f vec)
+        {
+            return vec.x + vec.y;
+        }
+
+        /// <summary>
+        /// Returns the largest component of a vector.
+        /// aka which are largest ov x, y, z
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentMax(Vec2f vec)
+        {
+            return MathF.Max(vec.x, vec.y);
+        }
+
+        /// <summary>
+        /// Returns the smallest component of a vector.
+        /// aka which is smallest of x, y, z
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentMin(Vec2f vec)
+        {
+            return MathF.Min(vec.x, vec.y);
         }
 
 

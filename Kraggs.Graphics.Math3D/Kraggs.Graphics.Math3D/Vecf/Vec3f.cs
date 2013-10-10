@@ -647,6 +647,56 @@ namespace Kraggs.Graphics.Math3D
             };
         }
 
+        /// <summary>
+        /// Returns the result of all components multiplied.
+        /// aka x * y * z
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentMultiply(Vec3f vec)
+        {
+            return 1.0f * vec.x * vec.y * vec.z;
+        }
+
+        /// <summary>
+        /// Returns the sum of all the components.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentAdd(Vec3f vec)
+        {
+            return vec.x + vec.y + vec.z;
+        }
+
+        /// <summary>
+        /// Returns the largest component of a vector.
+        /// aka which are largest ov x, y, z
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentMax(Vec3f vec)
+        {
+            return Math.Max(vec.x, Math.Max(vec.y, vec.z));
+        }
+
+        /// <summary>
+        /// Returns the smallest component of a vector.
+        /// aka which is smallest of x, y, z
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentMin(Vec3f vec)
+        {
+            return Math.Min(vec.x, Math.Min(vec.y, vec.z));
+        }
+
 
         #endregion
 

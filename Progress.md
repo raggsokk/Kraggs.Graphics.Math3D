@@ -130,23 +130,33 @@ Milestone 11
 		ToString
 		GetHashCode
 		operator == !=
-		operator (Vec,float) + - * /
-		operator (float,Vec) + - * /
+		operator (Vec,int) + - * /
+		operator (int,Vec) + - * /
 		operator (Vec,Vec)   + - * /
+		operator (vec, int) << >>
+		operator VecXf (VecXi)
+		operator VecXi (VecXf)
 		Equals
-	Vector (Vec,Vec), (Vec, float)
+	Vector (Vec,Vec), (Vec, int)
 		Add 
 		Subtract
 		Multiply
 		Divide
 		Negate
+		HigherMultiple
+		LowerMultiple
+		ComponentMultiply
+		ComponentAdd
+		ComponentMax
+		ComponentMin
 		
-	
-Milestone x
+Mileston 13
 	reimplement Generics to use
 		a separate description struct.
 		This struct should have no instance
 		members but only functions/properties.
+	Sign the assembly.
+	Release builds should be put in own directory.
 		
 Milestone x++	
 	Color4f

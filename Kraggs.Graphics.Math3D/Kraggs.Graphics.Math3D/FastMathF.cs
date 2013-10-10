@@ -68,9 +68,11 @@ namespace Kraggs.Graphics.Math3D
 
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vec2f Pow(Vec2f x, Vec2f yINT)
+        public static Vec2f Pow(Vec2f x, Veci.Vec2i y)
         {
-            throw new NotImplementedException();
+            return new Vec2f(
+                Pow(x.x, y.x),
+                Pow(x.y, y.y));
         }
 
         /// <summary>
