@@ -11,6 +11,7 @@ namespace Kraggs.Graphics.Math3D
     [DebuggerNonUserCode()]
     public static class MathFunctions
     {
+        [Obsolete("Use MathF.Pow(float,float) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Pow(float x, float y)
         {
@@ -22,6 +23,7 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         /// <param name="x">x can be in range [inf-, inf+].</param>
         /// <returns></returns>
+        [Obsolete("Use MathF.Exp(float) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Exp(float x)
         {            
@@ -34,6 +36,7 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         /// <param name="x">result are undefined if x <= 0</param>
         /// <returns></returns>
+        [Obsolete("Use MathF.Log(float) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Log(float x)
         {            
@@ -45,6 +48,7 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         /// <param name="x">can be in range [inf-, inf+].</param>
         /// <returns></returns>
+        [Obsolete("Use MathF.Exp2(float) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Exp2(float x)
         {
@@ -58,6 +62,7 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         /// <param name="x">x needs to be in range [0, inf+] for return to be valid.</param>
         /// <returns></returns>
+        [Obsolete("Use MathF.Log2(float) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Log2(float x)
         {
@@ -73,6 +78,7 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         /// <param name="f">sqrt function is defined for input values of f in the range [0, inf+].</param>
         /// <returns></returns>
+        [Obsolete("Use MathF.Sqrt(float) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sqrt(float f)
         {
@@ -84,14 +90,16 @@ namespace Kraggs.Graphics.Math3D
         /// </summary>
         /// <param name="f">InverseSqrt function is defined for input values of f in the range [0, inf+].</param>
         /// <returns></returns>
+        [Obsolete("Use MathF.InverseSqrt(float) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float InverseSqrt(float f)
         {
-            return (float)1.0f / Sqrt(f);
+            return (float)1.0f / MathF.Sqrt(f);
         }
 
         #region Fast Functions
 
+        [Obsolete("Use FastMathF.InverseSqrt(float) instead")]
         public static unsafe float FastInverseSqrt(float x)
         {
             float tmp = x;
@@ -104,23 +112,27 @@ namespace Kraggs.Graphics.Math3D
             return tmp;
         }
 
+        [Obsolete("Use FastMathF.Sqrt(float) instead")]
         public static float FastSqrt(float x)
         {
-            return 1.0f / FastInverseSqrt(x);
+            return 1.0f / FastMathF.InverseSqrt(x);
+            //return 1.0f / FastInverseSqrt(x);
         }
 
         #endregion
 
         #region Trigonometric
 
+        [Obsolete("Use MathF.ToRadians(float) instead")]
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Radians(float degrees)
         {
             const float pi = 3.1415926535897932384626433832795f;
 
-            return degrees * (pi / 180.0f);
+            return degrees * (pi / 180.0f);        
         }
+        [Obsolete("Use MathF.ToDegrees(float) instead")]
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Degrees(float radians)
@@ -201,6 +213,7 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
+        [Obsolete("Use MathF.Clamp(float,float,float) instead.")]
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp(float x, float min, float max)
@@ -215,6 +228,7 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="y"></param>
         /// <param name="a"></param>
         /// <returns></returns>
+        [Obsolete("Use MathF.Mix(float,float,float) instead.")]
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Mix(float x, float y, float a)
@@ -228,6 +242,7 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="y"></param>
         /// <param name="a"></param>
         /// <returns></returns>
+        [Obsolete("Use MathF.Mix(float,float,bool) instead.")]
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Mix(float x, float y, bool a)
@@ -243,6 +258,7 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="edge"></param>
         /// <param name="x"></param>
         /// <returns></returns>
+        [Obsolete("Use MathF.Step(float,float) instead.")]
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Step(float edge, float x)
@@ -257,11 +273,12 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="edge1"></param>
         /// <param name="x"></param>
         /// <returns></returns>
+        [Obsolete("Use MathF.SmoothStep(float,float,float) instead.")]
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float SmoothStep(float edge0, float edge1, float x)
         {
-            float tmp = Clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+            float tmp = MathF.Clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
             return tmp * tmp * (3.0f - 2.0f * tmp);
         }
 

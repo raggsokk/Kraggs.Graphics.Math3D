@@ -346,7 +346,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float GetAngle(Quatf q)
         {
-            return (float)MathFunctions.Degrees((float)Math.Acos(q.w) * 2.0f);
+            //return (float)MathFunctions.Degrees((float)Math.Acos(q.w) * 2.0f);
+            return MathF.ToDegrees(MathF.Acos(q.w) * 2.0f);
         }
 
         /// <summary>
@@ -396,7 +397,8 @@ namespace Kraggs.Graphics.Math3D
         {
             Quatf result = UnitW;
 
-            float a = MathFunctions.Radians(angle);
+            //float a = MathFunctions.Radians(angle);
+            float a = MathF.ToRadians(angle);
             float s = (float)Math.Sin(a * 0.5f);
 
             result.w = (float)Math.Cos(a * 0.5f);
@@ -417,7 +419,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Roll(Quatf q)
         {
-            return MathFunctions.Degrees((float)Math.Atan2(2.0f * (q.x * q.y + q.w * q.z),
+            //return MathFunctions.Degrees((float)Math.Atan2(2.0f * (q.x * q.y + q.w * q.z),
+            return MathF.ToDegrees(MathF.Atan2(2.0f * (q.x * q.y + q.w * q.z),
                 q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z));
         }
 
@@ -430,7 +433,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Pitch(Quatf q)
         {
-            return MathFunctions.Degrees((float)Math.Atan2(2.0f * (q.y * q.z + q.w * q.x),
+            //return MathFunctions.Degrees((float)Math.Atan2(2.0f * (q.y * q.z + q.w * q.x),
+            return MathF.ToDegrees(MathF.Atan2(2.0f * (q.y * q.z + q.w * q.x),
                 q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z));
         }
         /// <summary>
@@ -442,7 +446,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Yaw(Quatf q)
         {
-            return MathFunctions.Degrees((float)Math.Asin(-2.0f * (q.x * q.z - q.w * q.y)));
+            return MathF.ToDegrees(MathF.Asin(-2.0f * (q.x * q.z - q.w * q.y)));
+            //return MathFunctions.Degrees((float)Math.Asin(-2.0f * (q.x * q.z - q.w * q.y)));
         }
 
         [DebuggerNonUserCode()]
@@ -609,7 +614,8 @@ namespace Kraggs.Graphics.Math3D
                 tmp.z *= oneOverLen;
             }
 
-            float AngleRad = MathFunctions.Radians(angleInDegrees);
+            //float AngleRad = MathFunctions.Radians(angleInDegrees);
+            float AngleRad = MathF.ToRadians(angleInDegrees);
             float fSin = (float)Math.Sin(AngleRad * 0.5f);
 
             return q * new Quatf()

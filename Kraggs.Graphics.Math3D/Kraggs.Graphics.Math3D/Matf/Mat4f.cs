@@ -510,7 +510,7 @@ namespace Kraggs.Graphics.Math3D
         /// <returns></returns>
         public static Mat4f CreateRotation(float angleInDegrees, Vec3f axis)
         {
-            float a = MathFunctions.Radians(angleInDegrees);
+            float a = MathF.ToRadians(angleInDegrees);
             float c = (float)Math.Cos(a);
             float s = (float)Math.Sin(a);
 
@@ -572,7 +572,7 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreateRotationX(float angleInDegrees)
         {
-            float r = MathFunctions.Radians(angleInDegrees);
+            float r = MathF.ToRadians(angleInDegrees);
             float c = (float)Math.Cos(r);
             float s = (float)Math.Sin(r);
 
@@ -595,7 +595,7 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Mat4f CreateRotationY(float angleInDegrees)
         {
-            float r = MathFunctions.Radians(angleInDegrees);
+            float r = MathF.ToRadians(angleInDegrees);
             float c = (float)Math.Cos(r);
             float s = (float)Math.Sin(r);
 
@@ -618,7 +618,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Mat4f CreateRotationZ(float angleInDegrees)
         {
-            float r = MathFunctions.Radians(angleInDegrees);
+            //float r = MathFunctions.Radians(angleInDegrees);
+            float r = MathF.ToRadians(angleInDegrees);
             float c = (float)Math.Cos(r);
             float s = (float)Math.Sin(r);
 
@@ -737,7 +738,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreatePerspective(float fovy, float aspect, float near, float far)
         {
-            float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            //float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            float range = MathF.Tan(MathF.ToRadians(fovy / 2.0f)) * near;
             float left = -range * aspect;
             float right = range * aspect;
             float bottom = -range;
@@ -767,7 +769,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreatePerspectiveFov(float fov, float width, float height, float near, float far)
         {
-            float rad = MathFunctions.Radians(fov);
+            //float rad = MathFunctions.Radians(fov);
+            float rad = MathF.ToRadians(fov);
             float h = (float)Math.Cos(0.5f * rad) / (float)Math.Sin(0.5f * rad);
             float w = h * height / width;
 
@@ -793,7 +796,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreateInfinitePerspective(float fovy, float aspect, float near)
         {
-            float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            //float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            float range = MathF.Tan(MathF.ToRadians(fovy / 2.0f)) * near;
             float left = -range * aspect;
             float right = range * aspect;
             float bottom = -range;
@@ -821,7 +825,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreateTweakedInfinitePerspective(float fovy, float aspect, float near)
         {
-            float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            //float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            float range = MathF.Tan(MathF.ToRadians(fovy / 2.0f)) * near;
             float left = -range * aspect;
             float right = range * aspect;
             float bottom = -range;
@@ -1107,9 +1112,9 @@ namespace Kraggs.Graphics.Math3D
 
             throw new NotImplementedException();
 
-            return new Mat4f(
+            //return new Mat4f(
 
-                );
+            //    );
 
         }
 

@@ -85,7 +85,8 @@ namespace Kraggs.Graphics.Math3D
         {
             get
             {
-                return MathFunctions.Sqrt(x * x + y * y);
+                return MathF.Sqrt(x * x + y * y);
+                //return MathFunctions.Sqrt(x * x + y * y);
             }
         }
 
@@ -100,7 +101,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Normalize()
         {
-            var f = 1.0f / MathFunctions.Sqrt(x * x + y * y);
+            //var f = 1.0f / MathFunctions.Sqrt(x * x + y * y);
+            var f = 1.0f / MathF.Sqrt(x * x + y * y);
 
             this.x = x * f;
             this.y = y * f;            
@@ -114,8 +116,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vec2f GetNormal()
         {
-            var f = 1.0f / MathFunctions.Sqrt(x * x + y * y);
-
+            //var f = 1.0f / MathFunctions.Sqrt(x * x + y * y);
+            var f = 1.0f / MathF.Sqrt(x * x + y * y);
             return new Vec2f() { x = x * f, y = y * f};
         }
 
@@ -132,7 +134,7 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vec2f Normalize(Vec2f vec)
         {
-            var f = 1.0f / MathFunctions.Sqrt(vec.x * vec.x + vec.y * vec.y);
+            var f = 1.0f / MathF.Sqrt(vec.x * vec.x + vec.y * vec.y);
 
             return new Vec2f()
             {
@@ -210,7 +212,8 @@ namespace Kraggs.Graphics.Math3D
             if (k < 0.0f)
                 return Vec2f.Zero;
             else
-                return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
+                return eta * I - (eta * dotValue + MathF.Sqrt(k)) * N;
+                //return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
             //TODO: Use operatores instead of function madness.
             //return Multiply(Subtract(Multiply(I, eta), (eta * dotValue + MathFunctions.Sqrt(k))), N);
 
@@ -241,8 +244,8 @@ namespace Kraggs.Graphics.Math3D
         {
             return new Vec2f()
             {
-                x = MathFunctions.Clamp(x.x, min, max),
-                y = MathFunctions.Clamp(x.y, min, max)
+                x = MathF.Clamp(x.x, min, max),
+                y = MathF.Clamp(x.y, min, max)
             };
         }
 
@@ -259,8 +262,8 @@ namespace Kraggs.Graphics.Math3D
         {
             return new Vec2f()
             {
-                x = MathFunctions.Clamp(x.x, min.x, max.x),
-                y = MathFunctions.Clamp(x.y, min.y, max.y)
+                x = MathF.Clamp(x.x, min.x, max.x),
+                y = MathF.Clamp(x.y, min.y, max.y)
             };
         }
 
@@ -279,7 +282,7 @@ namespace Kraggs.Graphics.Math3D
         }
 
         /// <summary>
-        /// Returns a mix of two vectors with mix factor a.
+        /// Returns a mix/lerp of two vectors with mix factor a.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -291,6 +294,58 @@ namespace Kraggs.Graphics.Math3D
         {
             return x + a * (y - x);
         }
+
+        /// <summary>
+        /// Returns a lerp/mix of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Lerp(Vec2f x, Vec2f y, float a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// Normalized Lerp.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Nlerp(Vec2f x, Vec2f y, float a)
+        {
+            return Vec2f.Normalize(x + a * (y - x));
+        }
+
+        /// <summary>
+        /// Spherical Lerp.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Slerp(Vec2f x, Vec2f y, float a)
+        {
+            // Dot product - the cosine of the angle between 2 vectors.
+            var dot = Vec2f.Dot(x, y);
+
+            // Clamp it to be in the range of Acos()
+            dot = MathF.Clamp(dot, -1.0f, 1.0f);
+
+            float theta = MathF.Acos(dot) * a;
+            var relativeVec = Vec2f.Normalize(y - x * dot); // Orthonormal basis
+
+            return ((x * MathF.Cos(theta)) + (relativeVec * MathF.Sin(theta)));
+        }
+
 
         /// <summary>
         /// step generates a step function by comparing x to edge.
@@ -341,8 +396,8 @@ namespace Kraggs.Graphics.Math3D
         {
             return new Vec2f()
             {
-                x = MathFunctions.SmoothStep(edge0, edge1, x.x),
-                y = MathFunctions.SmoothStep(edge0, edge1, x.y)
+                x = MathF.SmoothStep(edge0, edge1, x.x),
+                y = MathF.SmoothStep(edge0, edge1, x.y)
             };
         }
 
@@ -359,8 +414,8 @@ namespace Kraggs.Graphics.Math3D
         {
             return new Vec2f()
             {
-                x = MathFunctions.SmoothStep(edge0.x, edge1.x, x.x),
-                y = MathFunctions.SmoothStep(edge0.y, edge1.y, x.y)
+                x = MathF.SmoothStep(edge0.x, edge1.x, x.x),
+                y = MathF.SmoothStep(edge0.y, edge1.y, x.y)
             };
         }
 
