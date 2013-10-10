@@ -116,12 +116,50 @@ Milestone 9
 	Quaternions
 
 Milestone 10
+	MathFunction Reorg.
+		MathF 		(float version of Math)
+		FastMath 	(fast version of MathF)
+	Lerp 	(Linearly interpolates between two vectors.) (Is this SmoothStep?)
+	Slerp 	( torque-minimal path between two vectors.)
+	NLerp	(just normalized Lerp)
+		
+Milestone 11
+	Vec2i
+	Vec3i
+	Vec4i
+		ToString
+		GetHashCode
+		operator == !=
+		operator (Vec,float) + - * /
+		operator (float,Vec) + - * /
+		operator (Vec,Vec)   + - * /
+		Equals
+	Vector (Vec,Vec), (Vec, float)
+		Add 
+		Subtract
+		Multiply
+		Divide
+		Negate
+		
+	
+Milestone x
 	reimplement Generics to use
 		a separate description struct.
 		This struct should have no instance
 		members but only functions/properties.
+		
+Milestone x++	
+	Color4f
+		ToString
+		GetHashCode
+		operator == !=
+		operator (Vec,float) + - * /
+		operator (float,Vec) + - * /
+		operator (Vec,Vec)   + - * /
+		Equals
+		Lerp (each component separetely)
 
-Milestone 11
+Milestone x++
 	noise
 
 Release 1
@@ -137,3 +175,7 @@ Release 3
 	Milestone 7
 	Milestone 8
 	Milestone 9
+Release 4
+	Milestone 10
+	Milestone 11
+	
