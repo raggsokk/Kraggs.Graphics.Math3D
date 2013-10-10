@@ -13,7 +13,7 @@ namespace Kraggs.Graphics.Math3D.Veci
     /// </summary>
     [DebuggerDisplay("[ {x}, {y}, {z} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vec3i : IEquatable<Vec3i>
+    public partial struct Vec3i : IEquatable<Vec3i>, IBinaryStreamMath3D<Vec3i>, IGLTypeMath3D, IGenericStream
     {
         /// <summary>
         /// The x component.
@@ -1024,5 +1024,197 @@ namespace Kraggs.Graphics.Math3D.Veci
 
         #endregion
 
+        #region IGLTypeMath3D
+
+        private static readonly IGLDescriptionMath3D GLTypeDescription = new Vec3iGLDescription();
+
+        /// <summary>
+        /// Returns an object with description of this GL Type.
+        /// </summary>
+        public IGLDescriptionMath3D GetGLTypeDescription
+        {
+            get
+            {
+                Debug.Assert(Marshal.SizeOf(typeof(Vec3iGLDescription)) == 0);
+
+                return GetGLTypeDescription;
+            }
+        }
+
+        /// <summary>
+        /// Very private desc struct for this type.
+        /// </summary>
+        private struct Vec3iGLDescription : IGLDescriptionMath3D
+        {
+            Type IGLDescriptionMath3D.BaseType
+            {
+                get { return typeof(int); }
+            }
+
+            int IGLDescriptionMath3D.ComponentCount
+            {
+                get { return 3; }
+            }
+
+            int IGLDescriptionMath3D.SizeInBytes
+            {
+                get { return 12; }
+            }
+
+            int IGLDescriptionMath3D.GLBaseType
+            {
+                get { return GLConstants.GL_BASE_SINT; }
+            }
+
+            int IGLDescriptionMath3D.GLAttributeType
+            {
+                get { return GLConstants.INT_VEC3; }
+            }
+
+            int IGLDescriptionMath3D.GLUniformType
+            {
+                get { return GLConstants.INT_VEC3; }
+            }
+
+            bool IGLDescriptionMath3D.IsMatrix
+            {
+                get { return false; }
+            }
+
+            bool IGLDescriptionMath3D.IsRowMajor
+            {
+                get { return false; }
+            }
+
+            int IGLDescriptionMath3D.Columns
+            {
+                get { return 3; }
+            }
+
+            int IGLDescriptionMath3D.Rows
+            {
+                get { return 1; }
+            }
+        }
+
+        #endregion
+
+        #region IGenericStream Implementation
+
+        /// <summary>
+        /// Writes a vec3i.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="vec"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        void IGenericStream.WriteStream(System.IO.BinaryWriter writer, object vec)
+        {
+            Vec3i v = (Vec3i)vec;
+            writer.Write(v.x);
+            writer.Write(v.y);
+            writer.Write(v.z);
+        }
+
+        /// <summary>
+        /// Reads a vec3i.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        object IGenericStream.ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Vec3i(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+        }
+
+        #endregion
+
+        #region IBinaryStreamMath3D Implementation
+
+        /// <summary>
+        /// Writes out an array of vec4i's to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Vec3i[] elements, int index, int length)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            var len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                writer.Write(elements[i].x);
+                writer.Write(elements[i].y);
+                writer.Write(elements[i].z);                
+            }
+        }
+
+        /// <summary>
+        /// Reads in an array of Vec4i's from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public int ReadStream(System.IO.BinaryReader reader, Vec3i[] elements, int index, int length)
+        {
+            Debug.Assert(elements != null && elements.Length > 0);
+
+            int count = 0;
+            var len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                elements[i].x = reader.ReadInt32();
+                elements[i].y = reader.ReadInt32();
+                elements[i].z = reader.ReadInt32();                
+                count++;
+            }
+
+            return count;
+        }
+
+        /// <summary>
+        /// Write a single Vec4f to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="element"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Vec3i element)
+        {
+            //Debug.Assert(writer != null);
+
+            writer.Write(element.x);
+            writer.Write(element.y);
+            writer.Write(element.z);           
+        }
+
+        /// <summary>
+        /// Reads a single Vec4f from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public Vec3i ReadStream(System.IO.BinaryReader reader)
+        {
+            //Debug.Assert(reader != null);
+
+            return new Vec3i(
+                reader.ReadInt32(),                
+                reader.ReadInt32(),
+                reader.ReadInt32());
+        }
+
+        #endregion
     }
 }

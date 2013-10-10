@@ -13,7 +13,7 @@ namespace Kraggs.Graphics.Math3D
     /// </summary>
     [DebuggerDisplay("[ {x}, {y} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vec2f : IEquatable<Vec2f>, IGLMath, IGenericStream
+    public partial struct Vec2f : IEquatable<Vec2f>, IBinaryStreamMath3D<Vec2f>, IGLTypeMath3D,  IGLMath, IGenericStream
     {
         /// <summary>
         /// The x component.
@@ -1191,6 +1191,81 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
+        #region IGLTypeMath3D
+
+        private static readonly IGLDescriptionMath3D GLTypeDescription = new Vec2fGLDescription();
+
+        /// <summary>
+        /// Returns an object with description of this GL Type.
+        /// </summary>
+        public IGLDescriptionMath3D GetGLTypeDescription
+        {
+            get
+            {
+                Debug.Assert(Marshal.SizeOf(typeof(Vec2fGLDescription)) == 0);
+
+                return GetGLTypeDescription;
+            }
+        }
+
+        /// <summary>
+        /// Very private desc struct for this type.
+        /// </summary>
+        private struct Vec2fGLDescription : IGLDescriptionMath3D
+        {
+            Type IGLDescriptionMath3D.BaseType
+            {
+                get { return typeof(float); }
+            }
+
+            int IGLDescriptionMath3D.ComponentCount
+            {
+                get { return 2; }
+            }
+
+            int IGLDescriptionMath3D.SizeInBytes
+            {
+                get { return 8; }
+            }
+
+            int IGLDescriptionMath3D.GLBaseType
+            {
+                get { return GLConstants.GL_BASE_FLOAT; }
+            }
+
+            int IGLDescriptionMath3D.GLAttributeType
+            {
+                get { return GLConstants.FLOAT_VEC2; }
+            }
+
+            int IGLDescriptionMath3D.GLUniformType
+            {
+                get { return GLConstants.FLOAT_VEC2; }
+            }
+
+            bool IGLDescriptionMath3D.IsMatrix
+            {
+                get { return false; }
+            }
+
+            bool IGLDescriptionMath3D.IsRowMajor
+            {
+                get { return false; }
+            }
+
+            int IGLDescriptionMath3D.Columns
+            {
+                get { return 2; }
+            }
+
+            int IGLDescriptionMath3D.Rows
+            {
+                get { return 1; }
+            }
+        }
+
+        #endregion
+
         #region IGenericStream Implementation
 
         /// <summary>
@@ -1200,7 +1275,8 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="vec"></param>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void WriteStream(System.IO.BinaryWriter writer, object vec)
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        void IGenericStream.WriteStream(System.IO.BinaryWriter writer, object vec)
         {
             Vec2f v = (Vec2f)vec;
             writer.Write(v.x);
@@ -1214,7 +1290,8 @@ namespace Kraggs.Graphics.Math3D
         /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object ReadStream(System.IO.BinaryReader reader)
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        object IGenericStream.ReadStream(System.IO.BinaryReader reader)
         {
             return new Vec2f()
             {
@@ -1224,5 +1301,102 @@ namespace Kraggs.Graphics.Math3D
         }
 
         #endregion
+
+        #region IBinaryStreamMath3D Implementation
+
+        public void WriteStream(System.IO.BinaryWriter writer, Vec2f[] elements, int index, int count)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            var len = Math.Min(elements.Length, index + count);
+
+            //if (len < 1024)
+            {
+                for (int i = 0; i < len; i++)
+                {
+                    writer.Write(elements[i].x);
+                    writer.Write(elements[i].y);
+                }
+            }
+            //else
+            //{
+            //   // run superduper fast reader.
+            //}
+        }
+
+        public int ReadStream(System.IO.BinaryReader reader, Vec2f[] elements, int index, int length)
+        {
+            int count = 0;
+
+            var len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                elements[i].x = reader.ReadSingle();
+                elements[i].y = reader.ReadSingle();
+                //vecs[i] = new Vec2f(reader.ReadSingle(), reader.ReadSingle());
+                count++;
+            }
+
+            return count;
+        }
+
+        /// <summary>
+        /// Write a single vec2f.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="element"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void WriteStream(System.IO.BinaryWriter writer, Vec2f element)
+        {
+            writer.Write(element.x);
+            writer.Write(element.y);
+        }
+
+        /// <summary>
+        /// Read a single vec2f.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>        
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec2f ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Vec2f(reader.ReadSingle(), reader.ReadSingle());
+        }
+
+        #endregion
+
+        //public void WriteStream(System.IO.Stream writer, Vec2f[] elements, int index, int length)
+        //{
+        //    // naive impl.
+        //    var binwriter = new System.IO.BinaryWriter(writer);
+
+        //    WriteStream(binwriter, elements, index, length);
+        //}
+
+        //public int ReadStream(System.IO.Stream reader, Vec2f[] elements, int index, int length)
+        //{
+        //    // naive impl.
+        //    var binreader = new System.IO.BinaryReader(reader);
+        //    return ReadStream(binreader, elements, index, length);
+        //}
+
+        //public void WriteStream(System.IO.Stream writer, Vec2f element)
+        //{
+        //    writer.Write(BitConverter.GetBytes(element.x), 0, 4);
+        //    writer.Write(BitConverter.GetBytes(element.y), 0, 4);
+        //}
+
+        //public Vec2f ReadStream(System.IO.Stream reader)
+        //{
+        //    var buf = new byte[2 * sizeof(float)];
+        //    reader.Read(buf, 0, buf.Length);
+        //    return new Vec2f(
+        //        BitConverter.ToSingle(buf, 0),
+        //        BitConverter.ToSingle(buf, 4));
+        //}
     }
 }

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+//using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 
 namespace Kraggs.Graphics.Math3D
 {
     /// <summary>
-    /// Generic Stream Functions for reading / writing.
+    /// Generic Stream Functions for reading / writing a element.
     /// </summary>
+    //[Obsolete("Use functions in IBinaryStreamMath3D instead")]
     public interface IGenericStream
     {
         /// <summary>
@@ -23,5 +24,6 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="reader"></param>
         /// <returns></returns>
         object ReadStream(System.IO.BinaryReader reader);
+
     }
 }

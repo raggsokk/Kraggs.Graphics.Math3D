@@ -10,7 +10,7 @@ namespace Kraggs.Graphics.Math3D
 {
     [DebuggerDisplay("[ {w}, {x}, {y}, {z} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Quatf : IEquatable<Quatf>, IGLMath, IGenericStream
+    public partial struct Quatf : IEquatable<Quatf>, IBinaryStreamMath3D<Quatf>, IGLTypeMath3D, IGLMath, IGenericStream
     {
         /// <summary>
         /// The x component.
@@ -1087,6 +1087,81 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
+        #region IGLTypeMath3D
+
+        private static readonly IGLDescriptionMath3D GLTypeDescription = new Quat4fGLDescription();
+
+        /// <summary>
+        /// Returns an object with description of this GL Type.
+        /// </summary>
+        public IGLDescriptionMath3D GetGLTypeDescription
+        {
+            get
+            {
+                Debug.Assert(Marshal.SizeOf(typeof(Quat4fGLDescription)) == 0);
+
+                return GetGLTypeDescription;
+            }
+        }
+
+        /// <summary>
+        /// Very private desc struct for this type.
+        /// </summary>
+        private struct Quat4fGLDescription : IGLDescriptionMath3D
+        {
+            Type IGLDescriptionMath3D.BaseType
+            {
+                get { return typeof(float); }
+            }
+
+            int IGLDescriptionMath3D.ComponentCount
+            {
+                get { return 4; }
+            }
+
+            int IGLDescriptionMath3D.SizeInBytes
+            {
+                get { return 16; }
+            }
+
+            int IGLDescriptionMath3D.GLBaseType
+            {
+                get { return GLConstants.GL_BASE_FLOAT; }
+            }
+
+            int IGLDescriptionMath3D.GLAttributeType
+            {
+                get { return GLConstants.FLOAT_VEC4; }
+            }
+
+            int IGLDescriptionMath3D.GLUniformType
+            {
+                get { return GLConstants.FLOAT_VEC4; }
+            }
+
+            bool IGLDescriptionMath3D.IsMatrix
+            {
+                get { return false; }
+            }
+
+            bool IGLDescriptionMath3D.IsRowMajor
+            {
+                get { return false; }
+            }
+
+            int IGLDescriptionMath3D.Columns
+            {
+                get { return 4; }
+            }
+
+            int IGLDescriptionMath3D.Rows
+            {
+                get { return 1; }
+            }
+        }
+
+        #endregion
+
         #region IGenericStream Implementation
 
         /// <summary>
@@ -1096,7 +1171,8 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="vec"></param>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void WriteStream(System.IO.BinaryWriter writer, object vec)
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        void IGenericStream.WriteStream(System.IO.BinaryWriter writer, object vec)
         {
             Quatf v = (Quatf)vec;
             writer.Write(v.w);
@@ -1113,7 +1189,8 @@ namespace Kraggs.Graphics.Math3D
         /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object ReadStream(System.IO.BinaryReader reader)
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        object IGenericStream.ReadStream(System.IO.BinaryReader reader)
         {
             return new Quatf()
             {
@@ -1122,6 +1199,91 @@ namespace Kraggs.Graphics.Math3D
                 y = reader.ReadSingle(),
                 z = reader.ReadSingle()                
             };
+        }
+
+        #endregion
+
+        #region IBinaryStreamMath3D Implementation
+
+        /// <summary>
+        /// Writes out an array of Quat4f's to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Quatf[] elements, int index, int length)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            int len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                WriteStream(writer, elements[i]);
+            }
+        }
+
+        /// <summary>
+        /// Reads in an array of Quat4f's from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public int ReadStream(System.IO.BinaryReader reader, Quatf[] elements, int index, int length)
+        {
+            Debug.Assert(elements != null);
+
+            int count = 0;
+            int len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                elements[i] = ReadStream(reader);
+                count++;
+            }
+
+            return count;
+        }
+
+        /// <summary>
+        /// Writes a Quat4f to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="element"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Quatf element)
+        {            
+            writer.Write(element.x);
+            writer.Write(element.y);
+            writer.Write(element.z);
+            writer.Write(element.w);
+        }
+
+        /// <summary>
+        /// Reads a single Quat4f from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public Quatf ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Quatf() { 
+                x = reader.ReadSingle(),
+                y = reader.ReadSingle(),
+                z = reader.ReadSingle(),
+                w = reader.ReadSingle()
+            };
+            //return new Quatf(
+            //    reader.ReadSingle(),
+            //    reader.ReadSingle(),
+            //    reader.ReadSingle(),
+            //    reader.ReadSingle());
         }
 
         #endregion

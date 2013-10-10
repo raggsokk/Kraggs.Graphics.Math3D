@@ -11,7 +11,7 @@ namespace Kraggs.Graphics.Math3D
     //[DebuggerDisplay("TODO")]
     [DebuggerDisplay("{DebugDisplayHelper()}")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Mat2f : IEquatable<Mat2f>, IGLMatrix, IGenericStream
+    public partial struct Mat2f : IEquatable<Mat2f>, IBinaryStreamMath3D<Mat2f>, IGLTypeMath3D, IGLMatrix, IGenericStream
     {
         /// <summary>
         /// The first column.
@@ -931,6 +931,81 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
+        #region IGLTypeMath3D
+
+        private static readonly IGLDescriptionMath3D GLTypeDescription = new Mat2fGLDescription();
+
+        /// <summary>
+        /// Returns an object with description of this GL Type.
+        /// </summary>
+        public IGLDescriptionMath3D GetGLTypeDescription
+        {
+            get
+            {
+                Debug.Assert(Marshal.SizeOf(typeof(Mat2fGLDescription)) == 0);
+
+                return GetGLTypeDescription;
+            }
+        }
+
+        /// <summary>
+        /// Very private desc struct for this type.
+        /// </summary>
+        private struct Mat2fGLDescription : IGLDescriptionMath3D
+        {
+            Type IGLDescriptionMath3D.BaseType
+            {
+                get { return typeof(float); }
+            }
+
+            int IGLDescriptionMath3D.ComponentCount
+            {
+                get { return 4; }
+            }
+
+            int IGLDescriptionMath3D.SizeInBytes
+            {
+                get { return 16; }
+            }
+
+            int IGLDescriptionMath3D.GLBaseType
+            {
+                get { return GLConstants.GL_BASE_FLOAT; }
+            }
+
+            int IGLDescriptionMath3D.GLAttributeType
+            {
+                get { return GLConstants.FLOAT_MAT2; }
+            }
+
+            int IGLDescriptionMath3D.GLUniformType
+            {
+                get { return GLConstants.FLOAT_MAT2; }
+            }
+
+            bool IGLDescriptionMath3D.IsMatrix
+            {
+                get { return true; }
+            }
+
+            bool IGLDescriptionMath3D.IsRowMajor
+            {
+                get { return false; }
+            }
+
+            int IGLDescriptionMath3D.Columns
+            {
+                get { return 2; }
+            }
+
+            int IGLDescriptionMath3D.Rows
+            {
+                get { return 2; }
+            }
+        }
+
+        #endregion
+
         #region IGenericStream Implementation
 
         /// <summary>
@@ -940,7 +1015,8 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="vec"></param>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void WriteStream(System.IO.BinaryWriter writer, object matrix)
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        void IGenericStream.WriteStream(System.IO.BinaryWriter writer, object matrix)
         {
             Mat2f m = (Mat2f)matrix;
             writer.Write(m.c0.x);
@@ -956,9 +1032,98 @@ namespace Kraggs.Graphics.Math3D
         /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object ReadStream(System.IO.BinaryReader reader)
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        object IGenericStream.ReadStream(System.IO.BinaryReader reader)
         {
             return new Mat2f(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+        }
+
+        #endregion
+
+        #region IBinaryStreamMath3D Implementation
+
+        /// <summary>
+        /// Writes an array of Mat2f's to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Mat2f[] elements, int index, int length)
+        {
+            if (elements == null && elements.Length == 0)
+                return;
+
+            int len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                writer.Write(elements[i].c0.x);
+                writer.Write(elements[i].c0.y);
+                writer.Write(elements[i].c1.x);
+                writer.Write(elements[i].c1.y);
+            }
+        }
+
+        /// <summary>
+        /// Reads an array of Mat2f's from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public int ReadStream(System.IO.BinaryReader reader, Mat2f[] elements, int index, int length)
+        {
+            Debug.Assert(elements != null && elements.Length > 0);
+
+            int count = 0;
+            int len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                //elements[i] = ReadStream(reader);
+                elements[i].c0.x = reader.ReadSingle();
+                elements[i].c0.y = reader.ReadSingle();
+                elements[i].c1.x = reader.ReadSingle();
+                elements[i].c1.y = reader.ReadSingle();
+
+                count++;
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Writes a single Mat4f to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="element"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Mat2f element)
+        {
+            writer.Write(element.c0.x);
+            writer.Write(element.c0.y);
+            writer.Write(element.c1.x);
+            writer.Write(element.c1.y);
+        }
+
+        
+        /// <summary>
+        /// Reads a single Mat2f from a binary Reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public Mat2f ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Mat2f(
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle()
+                );
         }
 
         #endregion

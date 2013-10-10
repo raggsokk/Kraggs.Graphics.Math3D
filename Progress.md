@@ -151,10 +151,12 @@ Milestone 11
 		ComponentMin
 		
 Mileston 13
-	reimplement Generics to use
+	reimplement GL Generics to use
 		a separate description struct.
 		This struct should have no instance
 		members but only functions/properties.
+	extend StreamExtensions maybe rename to binarystreamextension?
+		
 	Sign the assembly.
 	Release builds should be put in own directory.
 		
