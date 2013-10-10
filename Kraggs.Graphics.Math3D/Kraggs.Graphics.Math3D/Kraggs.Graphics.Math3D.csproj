@@ -49,7 +49,10 @@
     <Compile Include="FastMathF.cs" />
     <Compile Include="Generic\GLConstants.cs" />
     <Compile Include="Generic\IGenericStream.cs" />
+    <Compile Include="Generic\IBinaryStreamMath3D.cs" />
+    <Compile Include="Generic\IGLDescriptionMath3D.cs" />
     <Compile Include="Generic\IGLMath.cs" />
+    <Compile Include="Generic\IGLTypeMath3D.cs" />
     <Compile Include="Generic\IGLMatrix.cs" />
     <Compile Include="Matf\Mat2f.cs" />
     <Compile Include="Matf\Mat3f.cs" />
@@ -58,7 +61,7 @@
     <Compile Include="MathFunctions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quaternion\Quatf.cs" />
-    <Compile Include="StreamExtensions\StreamExtensions.cs" />
+    <Compile Include="StreamExtensions\BinaryStreamExtensions.cs" />
     <Compile Include="Vecf\Vec2f.cs" />
     <Compile Include="Vecf\Vec3f.cs" />
     <Compile Include="Vecf\Vec4f.cs" />

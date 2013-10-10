@@ -12,6 +12,7 @@ namespace Kraggs.Graphics.Math3D
     /// An interface describing our math elements for generic opengl functions.
     /// Might find another better name thou.
     /// </summary>
+    [Obsolete("Use IGLTypeMath3d and its IGLDescriptionMath3d instead.")]
     public interface IGLMath
     {
         /// <summary>

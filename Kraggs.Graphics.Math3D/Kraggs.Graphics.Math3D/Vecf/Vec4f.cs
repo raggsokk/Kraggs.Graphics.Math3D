@@ -13,7 +13,7 @@ namespace Kraggs.Graphics.Math3D
     /// </summary>
     [DebuggerDisplay("[ {x}, {y}, {z}, {w} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vec4f : IEquatable<Vec4f>, IGLMath, IGenericStream
+    public partial struct Vec4f : IEquatable<Vec4f>, IBinaryStreamMath3D<Vec4f>, IGLTypeMath3D, IGLMath, IGenericStream
     {
         /// <summary>
         /// The x component.
@@ -1355,6 +1355,81 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
+        #region IGLTypeMath3D
+
+        private static readonly IGLDescriptionMath3D GLTypeDescription = new Vec4fGLDescription();
+
+        /// <summary>
+        /// Returns an object with description of this GL Type.
+        /// </summary>
+        public IGLDescriptionMath3D GetGLTypeDescription
+        {
+            get
+            {
+                Debug.Assert(Marshal.SizeOf(typeof(Vec4fGLDescription)) == 0);
+
+                return GetGLTypeDescription;
+            }
+        }
+
+        /// <summary>
+        /// Very private desc struct for this type.
+        /// </summary>
+        private struct Vec4fGLDescription : IGLDescriptionMath3D
+        {
+            Type IGLDescriptionMath3D.BaseType
+            {
+                get { return typeof(float); }
+            }
+
+            int IGLDescriptionMath3D.ComponentCount
+            {
+                get { return 4; }
+            }
+
+            int IGLDescriptionMath3D.SizeInBytes
+            {
+                get { return 16; }
+            }
+
+            int IGLDescriptionMath3D.GLBaseType
+            {
+                get { return GLConstants.GL_BASE_FLOAT; }
+            }
+
+            int IGLDescriptionMath3D.GLAttributeType
+            {
+                get { return GLConstants.FLOAT_VEC4; }
+            }
+
+            int IGLDescriptionMath3D.GLUniformType
+            {
+                get { return GLConstants.FLOAT_VEC4; }
+            }
+
+            bool IGLDescriptionMath3D.IsMatrix
+            {
+                get { return false; }
+            }
+
+            bool IGLDescriptionMath3D.IsRowMajor
+            {
+                get { return false; }
+            }
+
+            int IGLDescriptionMath3D.Columns
+            {
+                get { return 4; }
+            }
+
+            int IGLDescriptionMath3D.Rows
+            {
+                get { return 1; }
+            }
+        }
+
+        #endregion
+
         #region IGenericStream Implementation
 
         /// <summary>
@@ -1364,7 +1439,8 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="vec"></param>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void WriteStream(System.IO.BinaryWriter writer, object vec)
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        void IGenericStream.WriteStream(System.IO.BinaryWriter writer, object vec)
         {
             Vec4f v = (Vec4f)vec;
             writer.Write(v.x);
@@ -1380,7 +1456,8 @@ namespace Kraggs.Graphics.Math3D
         /// <returns></returns>
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public object ReadStream(System.IO.BinaryReader reader)
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        object IGenericStream.ReadStream(System.IO.BinaryReader reader)
         {
             return new Vec4f()
             {
@@ -1392,6 +1469,92 @@ namespace Kraggs.Graphics.Math3D
         }
 
         #endregion
+
+        #region IBinaryStreamMath3D Implementation
+
+        /// <summary>
+        /// Writes out an array of vec4f's to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Vec4f[] elements, int index, int length)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            var len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                writer.Write(elements[i].x);
+                writer.Write(elements[i].y);
+                writer.Write(elements[i].z);
+                writer.Write(elements[i].w);
+            }
+        }
+
+        /// <summary>
+        /// Reads in an array of Vec4f's from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public int ReadStream(System.IO.BinaryReader reader, Vec4f[] elements, int index, int length)
+        {
+            Debug.Assert(elements != null && elements.Length > 0);
+
+            int count = 0;
+            var len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                elements[i].x = reader.ReadSingle();
+                elements[i].y = reader.ReadSingle();
+                elements[i].z = reader.ReadSingle();
+                elements[i].w = reader.ReadSingle();
+                count++;
+            }
+
+            return count;
+        }
+
+        /// <summary>
+        /// Write a single Vec4f to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="element"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Vec4f element)
+        {
+            writer.Write(element.x);
+            writer.Write(element.y);
+            writer.Write(element.z);
+            writer.Write(element.w);
+        }
+
+        /// <summary>
+        /// Reads a single Vec4f from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public Vec4f ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Vec4f(
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle());
+        }
+
+        #endregion
+
 
     }
 }

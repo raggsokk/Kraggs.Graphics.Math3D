@@ -12,6 +12,7 @@ namespace Kraggs.Graphics.Math3D
     /// This properties might even be included in IGLMath since a vector
     /// is also a 3x1 matrix.
     /// </summary>
+    [Obsolete("Use IGLTypeMath3d and its IGLDescriptionMath3d instead.")]
     public interface IGLMatrix : IGLMath
     {
         /// <summary>

@@ -10,7 +10,7 @@ namespace Kraggs.Graphics.Math3D
 {
     //[DebuggerDisplay("TODO")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Mat4f : IEquatable<Mat4f>, IGLMatrix, IGenericStream
+    public partial struct Mat4f : IEquatable<Mat4f>, IBinaryStreamMath3D<Mat4f>, IGLTypeMath3D, IGLMatrix, IGenericStream
     {
         /// <summary>
         /// The First Column.
@@ -2008,6 +2008,81 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
+        #region IGLTypeMath3D
+
+        private static readonly IGLDescriptionMath3D GLTypeDescription = new Mat4fGLDescription();
+
+        /// <summary>
+        /// Returns an object with description of this GL Type.
+        /// </summary>
+        public IGLDescriptionMath3D GetGLTypeDescription
+        {
+            get
+            {
+                Debug.Assert(Marshal.SizeOf(typeof(Mat4fGLDescription)) == 0);
+
+                return GetGLTypeDescription;
+            }
+        }
+
+        /// <summary>
+        /// Very private desc struct for this type.
+        /// </summary>
+        private struct Mat4fGLDescription : IGLDescriptionMath3D
+        {
+            Type IGLDescriptionMath3D.BaseType
+            {
+                get { return typeof(float); }
+            }
+
+            int IGLDescriptionMath3D.ComponentCount
+            {
+                get { return 16; }
+            }
+
+            int IGLDescriptionMath3D.SizeInBytes
+            {
+                get { return 64; }
+            }
+
+            int IGLDescriptionMath3D.GLBaseType
+            {
+                get { return GLConstants.GL_BASE_FLOAT; }
+            }
+
+            int IGLDescriptionMath3D.GLAttributeType
+            {
+                get { return GLConstants.FLOAT_MAT4; }
+            }
+
+            int IGLDescriptionMath3D.GLUniformType
+            {
+                get { return GLConstants.FLOAT_MAT4; }
+            }
+
+            bool IGLDescriptionMath3D.IsMatrix
+            {
+                get { return true; }
+            }
+
+            bool IGLDescriptionMath3D.IsRowMajor
+            {
+                get { return false; }
+            }
+
+            int IGLDescriptionMath3D.Columns
+            {
+                get { return 4; }
+            }
+
+            int IGLDescriptionMath3D.Rows
+            {
+                get { return 4; }
+            }
+        }
+
+        #endregion
+
         #region IGenericStream Implementation
 
         //[DebuggerNonUserCode()]
@@ -2040,8 +2115,9 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="writer"></param>
         /// <param name="vec"></param>
         [DebuggerNonUserCode()]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
         //[MethodImpl(MethodImplOptions.AggressiveInlining)] // not working with unsafe code!
-        public unsafe void WriteStream(System.IO.BinaryWriter writer, object matrix)
+        unsafe void IGenericStream.WriteStream(System.IO.BinaryWriter writer, object matrix)
         {            
             Mat4f m = (Mat4f)matrix;
 
@@ -2059,8 +2135,9 @@ namespace Kraggs.Graphics.Math3D
         /// <param name="reader"></param>
         /// <returns></returns>
         [DebuggerNonUserCode()]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
         //[MethodImpl(MethodImplOptions.AggressiveInlining)] // not working with unsafe code!
-        public unsafe object ReadStream(System.IO.BinaryReader reader)
+        unsafe object IGenericStream.ReadStream(System.IO.BinaryReader reader)
         {
             var buf = new byte[Mat4f.SizeInBytes];
 
@@ -2080,5 +2157,163 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
+        #region IBinaryStreamMath3D Implementation
+
+        /// <summary>
+        /// Writes an array of Mat4f elements to a stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public unsafe void WriteStream(System.IO.Stream writer, Mat4f[] elements, int index, int length)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            var elementCount = Math.Min(elements.Length, index + length) - index;
+            //var sizeinbytes = Marshal.SizeOf(typeof(Mat4f));
+
+            var buf = new byte[elementCount * Mat4f.SizeInBytes];
+
+            fixed (float* ptr = &elements[index].c0.x)
+            {
+                Marshal.Copy((IntPtr)ptr, buf, 0, buf.Length);
+            }
+
+            writer.Write(buf, 0, buf.Length);
+        }
+
+        /// <summary>
+        /// Writes out an array of Mat4f's to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Mat4f[] elements, int index, int length)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            this.WriteStream(writer.BaseStream, elements, index, length);
+            //if (elements == null || elements.Length == 0)
+            //    return;
+
+            //var elementCount = Math.Min(elements.Length, index + length) - index;
+            //var sizeinbytes = Marshal.SizeOf(typeof(Mat4f));
+
+            //var buf = new byte[elementCount * sizeinbytes];
+
+            //fixed (float* ptr = &elements[index].c0.x)
+            //{
+            //    Marshal.Copy((IntPtr)ptr, buf, 0, buf.Length);
+            //}
+
+            //writer.Write(buf, 0, buf.Length);
+        }
+
+        /// <summary>
+        /// Reads in a number of matrices from a stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public unsafe int ReadStream(System.IO.Stream reader, Mat4f[] elements, int index, int length)
+        {
+            Debug.Assert(elements != null && elements.Length > 0);
+
+            int count = 0;
+            //int sizeinbytes = Marshal.SizeOf(typeof(Mat4f));
+            var elementCount = Math.Min(elements.Length, index + length) - index;
+
+            var buf = new byte[elementCount * Mat3f.SizeInBytes];
+            count = reader.Read(buf, 0, buf.Length);
+
+            fixed (float* ptr = &elements[index].c0.x)
+            {
+                Marshal.Copy(buf, 0, (IntPtr)ptr, count * Mat3f.SizeInBytes);
+            }
+
+            if (count == buf.Length)
+                return elementCount;
+            else
+                return count % Mat3f.SizeInBytes;
+        }
+
+
+        /// <summary>
+        /// Reads in an array of Mat4f's from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public int ReadStream(System.IO.BinaryReader reader, Mat4f[] elements, int index, int length)
+        {
+            return ReadStream(reader.BaseStream, elements, index, length);
+            //Debug.Assert(elements != null && elements.Length > 0);
+
+            //int count = 0;
+            //int sizeinbytes = Marshal.SizeOf(typeof(Mat4f));
+            //var elementCount = Math.Min(elements.Length, index + length) - index;
+
+            //var buf = new byte[elementCount * sizeinbytes];
+            //count = reader.Read(buf, 0, buf.Length);
+
+            //fixed (float* ptr = &elements[index].c0.x)
+            //{
+            //    Marshal.Copy(buf, 0, (IntPtr)ptr, count * sizeinbytes);
+            //}
+
+            //if (count == buf.Length)
+            //    return elementCount;
+            //else
+            //    return count % sizeinbytes;
+        }
+
+        /// <summary>
+        /// Write a single Mat4f to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="element"></param>
+        [DebuggerNonUserCode()]
+        public unsafe void WriteStream(System.IO.BinaryWriter writer, Mat4f element)
+        {
+            float* ptr = &element.c0.x;
+            for (int i = 0; i < 16; i++)
+                writer.Write(ptr[i]);
+        }
+
+        /// <summary>
+        /// Reads a single Mat4f from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public unsafe Mat4f ReadStream(System.IO.BinaryReader reader)
+        {
+            Mat4f m = Mat4f.Zero;
+
+            float* ptr = &m.c0.x;
+
+            //var buf = new byte[16 * sizeof(float)];
+            //reader.Read(buf, 0, buf.Length);
+            //Marshal.Copy(buf, 0, (IntPtr)ptr, buf.Length);
+
+            for (int i = 0; i < 16; i++)
+                ptr[i] = reader.ReadSingle();
+
+            return m;
+        }
+
+        #endregion
     }
 }
