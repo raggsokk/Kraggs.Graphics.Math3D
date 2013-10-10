@@ -13,7 +13,7 @@ namespace Kraggs.Graphics.Math3D
     /// </summary>
     [DebuggerDisplay("[ {x}, {y}, {z} ]")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vec3f : IEquatable<Vec3f>
+    public partial struct Vec3f : IEquatable<Vec3f>, IBinaryStreamMath3D<Vec3f>, IGLTypeMath3D, IGLMath, IGenericStream
     {
         /// <summary>
         /// The x component.
@@ -99,7 +99,7 @@ namespace Kraggs.Graphics.Math3D
         {
             get
             {
-                return MathFunctions.Sqrt(x * x + y * y + z * z);
+                return MathF.Sqrt(x * x + y * y + z * z);
             }
         }
 
@@ -114,7 +114,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Normalize()
         {
-            var f = 1.0f / MathFunctions.Sqrt(x * x + y * y + z * z);
+            //var f = 1.0f / MathFunctions.Sqrt(x * x + y * y + z * z);
+            var f = 1.0f / MathF.Sqrt(x * x + y * y + z * z);
 
             this.x = x * f;
             this.y = y * f;
@@ -129,7 +130,7 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vec3f GetNormal()
         {
-            var f = 1.0f / MathFunctions.Sqrt(x * x + y * y + z * z);
+            var f = 1.0f / MathF.Sqrt(x * x + y * y + z * z);
 
             return new Vec3f() { x = x * f, y = y * f, z = z * f };
         }
@@ -137,8 +138,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vec3f GetFastNormal()
         {
-            var f = MathFunctions.FastInverseSqrt(x * x + y * y + z * z);
-
+            //var f = MathFunctions.FastInverseSqrt(x * x + y * y + z * z);
+            var f = FastMathF.InverseSqrt(x * x + y * y + z * z);
             return new Vec3f() { x = x * f, y = y * f, z = z * f };
         }
         #endregion
@@ -154,7 +155,7 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vec3f Normalize(Vec3f vec)
         {
-            var f = 1.0f / MathFunctions.Sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+            var f = 1.0f / MathF.Sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 
             return new Vec3f()
             {
@@ -288,7 +289,7 @@ namespace Kraggs.Graphics.Math3D
             if (k < 0.0f)
                 return Vec3f.Zero;
             else
-                return eta * I - (eta * dotValue + MathFunctions.Sqrt(k)) * N;
+                return eta * I - (eta * dotValue + MathF.Sqrt(k)) * N;
             //TODO: Use operatores instead of function madness.
                 //return Multiply(Subtract(Multiply(I, eta), (eta * dotValue + MathFunctions.Sqrt(k))), N);
                             
@@ -312,7 +313,7 @@ namespace Kraggs.Graphics.Math3D
         {
             return
                 Dot(left, right) *
-                MathFunctions.InverseSqrt(Dot(left, left)) *
+                MathF.InverseSqrt(Dot(left, left)) *
                 Dot(right, right);
         }
 
@@ -327,7 +328,7 @@ namespace Kraggs.Graphics.Math3D
         {
             return
                 Dot(left, right) *
-                MathFunctions.FastInverseSqrt(Dot(left, left)) *
+                FastMathF.InverseSqrt(Dot(left, left)) *
                 Dot(right, right);
         }
 
@@ -345,8 +346,357 @@ namespace Kraggs.Graphics.Math3D
             Dot(ref left, ref left, out b);
             Dot(ref right, ref right, out c);
 
-            result = a * MathFunctions.FastInverseSqrt(b) * c;
+            result = a * FastMathF.InverseSqrt(b) * c;
         }
+
+        /// <summary>
+        /// Clamps the components of a vector to between min and max.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Clamp(Vec3f x, float min, float max)
+        {
+            return new Vec3f()
+            {
+                x = MathF.Clamp(x.x, min, max),
+                y = MathF.Clamp(x.y, min, max),
+                z = MathF.Clamp(x.z, min, max)
+            };
+        }
+
+        /// <summary>
+        /// Clamps the components of a vector to between min and max.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Clamp(Vec3f x, Vec3f min, Vec3f max)
+        {
+            return new Vec3f()
+            {
+                x = MathF.Clamp(x.x, min.x, max.x),
+                y = MathF.Clamp(x.y, min.y, max.y),
+                z = MathF.Clamp(x.z, min.z, max.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns a mix/lerp of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Mix(Vec3f x, Vec3f y, float a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// Returns a mix of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Mix(Vec3f x, Vec3f y, Vec3f a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// Returns a lerp/mix of two vectors with mix factor a.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Lerp(Vec3f x, Vec3f y, float a)
+        {
+            return x + a * (y - x);
+        }
+
+        /// <summary>
+        /// Normalized Lerp.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Nlerp(Vec3f x, Vec3f y, float a)
+        {
+            return Vec3f.Normalize(x + a * (y - x));
+        }
+
+        /// <summary>
+        /// Spherical Lerp.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Slerp(Vec3f x, Vec3f y, float a)
+        {
+            // Dot product - the cosine of the angle between 2 vectors.
+            var dot = Vec3f.Dot(x, y);
+
+            // Clamp it to be in the range of Acos()
+            dot = MathF.Clamp(dot, -1.0f, 1.0f);
+
+            float theta = MathF.Acos(dot) * a;
+            var relativeVec = Vec3f.Normalize(y - x * dot); // Orthonormal basis
+
+            return ((x * MathF.Cos(theta)) + (relativeVec * MathF.Sin(theta)));
+        }
+
+        /// <summary>
+        /// step generates a step function by comparing x to edge.
+        /// For element i of the return value, 0.0 is returned if x[i] < edge[i], and 1.0 is returned otherwise.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Step(float edge, Vec3f x)
+        {
+            return new Vec3f()
+            {
+                x = x.x < edge ? 0.0f : 1.0f,
+                y = x.y < edge ? 0.0f : 1.0f,
+                z = x.z < edge ? 0.0f : 1.0f
+            };
+        }
+
+        /// <summary>
+        /// step generates a step function by comparing x to edge.
+        /// For element i of the return value, 0.0 is returned if x[i] gt edge[i], and 1.0 is returned otherwise.
+        /// </summary>
+        /// <param name="edge"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Step(Vec3f edge, Vec3f x)
+        {
+            return new Vec3f()
+            {
+                x = x.x < edge.x ? 0.0f : 1.0f,
+                y = x.y < edge.y ? 0.0f : 1.0f,
+                z = x.z < edge.z ? 0.0f : 1.0f
+            };
+        }
+
+        /// <summary>
+        /// perform Hermite interpolation between two values
+        /// </summary>
+        /// <param name="edge0"></param>
+        /// <param name="edge1"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f SmoothStep(float edge0, float edge1, Vec3f x)
+        {
+            return new Vec3f()
+            {
+                x = MathF.SmoothStep(edge0, edge1, x.x),
+                y = MathF.SmoothStep(edge0, edge1, x.y),
+                z = MathF.SmoothStep(edge0, edge1, x.z)
+            };
+        }
+
+        /// <summary>
+        /// perform Hermite interpolation between two values
+        /// </summary>
+        /// <param name="edge0"></param>
+        /// <param name="edge1"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f SmoothStep(Vec3f edge0, Vec3f edge1, Vec3f x)
+        {
+            return new Vec3f()
+            {
+                x = MathF.SmoothStep(edge0.x, edge1.x, x.x),
+                y = MathF.SmoothStep(edge0.y, edge1.y, x.y),
+                z = MathF.SmoothStep(edge0.z, edge1.z, x.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns the abolute value of a vector.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Abs(Vec3f v)
+        {
+            return new Vec3f()
+            {
+                x = Math.Abs(v.x),
+                y = Math.Abs(v.y),
+                z = Math.Abs(v.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns the smalles integral value that is greater than or equal to the specified number.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Ceiling(Vec3f v)
+        {
+            return new Vec3f()
+            {
+                x = (float)Math.Ceiling(v.x),
+                y = (float)Math.Ceiling(v.y),
+                z = (float)Math.Ceiling(v.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns the largest value less than or equal to the specified number
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Floor(Vec3f v)
+        {
+            return new Vec3f()
+            {
+                x = (float)Math.Floor(v.x),
+                y = (float)Math.Floor(v.y),
+                z = (float)Math.Floor(v.z)
+            };
+        }
+
+        /// <summary>
+        /// Calculates the integral component parts of a specified vector.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Truncate(Vec3f v)
+        {
+            return new Vec3f()
+            {
+                x = (float)Math.Truncate(v.x),
+                y = (float)Math.Truncate(v.y),
+                z = (float)Math.Truncate(v.z)
+            };
+        }
+
+
+        /// <summary>
+        /// Returns the larger components of two vectors.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Max(Vec3f left, Vec3f right)
+        {
+            return new Vec3f()
+            {
+                x = Math.Max(left.x, right.x),
+                y = Math.Max(left.y, right.y),
+                z = Math.Max(left.z, right.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns the smallest components of two vectors.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Min(Vec3f left, Vec3f right)
+        {
+            return new Vec3f()
+            {
+                x = Math.Min(left.x, right.x),
+                y = Math.Min(left.y, right.y),
+                z = Math.Min(left.z, right.z)
+            };
+        }
+
+        /// <summary>
+        /// Returns the result of all components multiplied.
+        /// aka x * y * z
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentMultiply(Vec3f vec)
+        {
+            return 1.0f * vec.x * vec.y * vec.z;
+        }
+
+        /// <summary>
+        /// Returns the sum of all the components.
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentAdd(Vec3f vec)
+        {
+            return vec.x + vec.y + vec.z;
+        }
+
+        /// <summary>
+        /// Returns the largest component of a vector.
+        /// aka which are largest ov x, y, z
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentMax(Vec3f vec)
+        {
+            return Math.Max(vec.x, Math.Max(vec.y, vec.z));
+        }
+
+        /// <summary>
+        /// Returns the smallest component of a vector.
+        /// aka which is smallest of x, y, z
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ComponentMin(Vec3f vec)
+        {
+            return Math.Min(vec.x, Math.Min(vec.y, vec.z));
+        }
+
 
         #endregion
 
@@ -918,6 +1268,260 @@ namespace Kraggs.Graphics.Math3D
                 x == other.x && 
                 y == other.y &&
                 z == other.z;
+        }
+
+        #endregion
+
+        #region IGLMath
+
+        /// <summary>
+        /// Returns the dotnet type of this components.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        Type IGLMath.BaseType
+        {
+            get { return typeof(float); }
+        }
+
+        /// <summary>
+        /// The number of components totaly in this vector.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.ComponentCount
+        {
+            get { return 3; }
+        }
+
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Vec3f));
+
+        /// <summary>
+        /// Returns the inmemory size in bytes of this vector.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.SizeInBytes
+        {
+            get { return Vec3f.SizeInBytes; }
+        }
+
+        /// <summary>
+        /// Returns the gl enum for base compoenent.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLBaseType
+        {
+            get { return GLConstants.GL_BASE_FLOAT; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL attribute type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLAttributeType
+        {
+            get { return GLConstants.FLOAT_VEC3; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL uniform type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLUniformType
+        {
+            get { return GLConstants.FLOAT_VEC3; }
+        }
+
+        /// <summary>
+        /// Is this a matrix (false)
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMath.IsMatrix
+        {
+            get { return false; }
+        }
+
+        #endregion
+
+        #region IGLTypeMath3D
+
+        private static readonly IGLDescriptionMath3D GLTypeDescription = new Vec3fGLDescription();
+
+        public IGLDescriptionMath3D GetGLTypeDescription
+        {
+            get
+            {
+                Debug.Assert(Marshal.SizeOf(typeof(Vec3fGLDescription)) == 0);
+
+                return GetGLTypeDescription;
+            }
+        }
+
+        private struct Vec3fGLDescription : IGLDescriptionMath3D
+        {
+            Type IGLDescriptionMath3D.BaseType
+            {
+                get { return typeof(float); }
+            }
+
+            int IGLDescriptionMath3D.ComponentCount
+            {
+                get { return 3; }
+            }
+
+            int IGLDescriptionMath3D.SizeInBytes
+            {
+                get { return 12; }
+                //get { return ComponentCount * sizeof(BaseType); }
+            }
+
+            int IGLDescriptionMath3D.GLBaseType
+            {
+                get { return GLConstants.GL_BASE_FLOAT; }
+            }
+
+            int IGLDescriptionMath3D.GLAttributeType
+            {
+                get { return GLConstants.FLOAT_VEC3; }
+            }
+
+            int IGLDescriptionMath3D.GLUniformType
+            {
+                get { return GLConstants.FLOAT_VEC3; }
+            }
+
+            bool IGLDescriptionMath3D.IsMatrix
+            {
+                get { return false; }
+            }
+
+            bool IGLDescriptionMath3D.IsRowMajor
+            {
+                get { return false; }
+            }
+
+            int IGLDescriptionMath3D.Columns
+            {
+                get { return 3; }
+            }
+
+            int IGLDescriptionMath3D.Rows
+            {
+                get { return 1; }
+            }
+        }
+
+        #endregion
+
+        #region IGenericStream Implementation
+
+        /// <summary>
+        /// Writes vec to stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="vec"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        void IGenericStream.WriteStream(System.IO.BinaryWriter writer, object vec)
+        {
+            Vec3f v = (Vec3f)vec;
+            writer.Write(v.x);
+            writer.Write(v.y);
+            writer.Write(v.z);
+        }
+
+        /// <summary>
+        /// Reads in a new vector from stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        object IGenericStream.ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Vec3f()
+            {
+                x = reader.ReadSingle(),
+                y = reader.ReadSingle(),
+                z = reader.ReadSingle()
+            };
+        }
+
+        #endregion
+
+        #region IBinaryStreamMath3D Implementation
+
+        /// <summary>
+        /// Writes out an array of vec3f's to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        public void WriteStream(System.IO.BinaryWriter writer, Vec3f[] elements, int index, int length)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            var len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                writer.Write(elements[i].x);
+                writer.Write(elements[i].y);
+                writer.Write(elements[i].z);
+            }
+        }
+
+        /// <summary>
+        /// Reads in an array of Vec3f's from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public int ReadStream(System.IO.BinaryReader reader, Vec3f[] elements, int index, int length)
+        {
+            int count = 0;
+            var len = Math.Min(elements.Length, index + length);
+
+            for (int i = index; i < len; i++)
+            {
+                elements[i].x = reader.ReadSingle();
+                elements[i].y = reader.ReadSingle();
+                elements[i].z = reader.ReadSingle();
+                count++;
+            }
+
+            return count;
+        }
+
+        /// <summary>
+        /// Write a single Vec3f to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="element"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Vec3f element)
+        {
+            writer.Write(element.x);
+            writer.Write(element.y);
+            writer.Write(element.z);
+        }
+        /// <summary>
+        /// Reads a single Vec3f from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public Vec3f ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Vec3f(
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle());
         }
 
         #endregion

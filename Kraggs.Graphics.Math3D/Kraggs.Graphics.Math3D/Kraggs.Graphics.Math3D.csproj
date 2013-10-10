@@ -31,24 +31,45 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Kraggs.Graphics.Math3D.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FastMathF.cs" />
+    <Compile Include="Generic\GLConstants.cs" />
+    <Compile Include="Generic\IGenericStream.cs" />
+    <Compile Include="Generic\IBinaryStreamMath3D.cs" />
+    <Compile Include="Generic\IGLDescriptionMath3D.cs" />
+    <Compile Include="Generic\IGLMath.cs" />
+    <Compile Include="Generic\IGLTypeMath3D.cs" />
+    <Compile Include="Generic\IGLMatrix.cs" />
     <Compile Include="Matf\Mat2f.cs" />
     <Compile Include="Matf\Mat3f.cs" />
     <Compile Include="Matf\Mat4f.cs" />
+    <Compile Include="MathF.cs" />
     <Compile Include="MathFunctions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quaternion\Quatf.cs" />
+    <Compile Include="StreamExtensions\BinaryStreamExtensions.cs" />
     <Compile Include="Vecf\Vec2f.cs" />
     <Compile Include="Vecf\Vec3f.cs" />
     <Compile Include="Vecf\Vec4f.cs" />
+    <Compile Include="Veci\Vec2i.cs" />
+    <Compile Include="Veci\Vec3i.cs" />
+    <Compile Include="Veci\Vec4i.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Kraggs.Graphics.Math3D.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

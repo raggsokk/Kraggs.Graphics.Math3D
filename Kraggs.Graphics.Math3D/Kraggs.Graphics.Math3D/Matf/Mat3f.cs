@@ -10,7 +10,7 @@ namespace Kraggs.Graphics.Math3D
 {
     //[DebuggerDisplay("TODO")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Mat3f : IEquatable<Mat3f>
+    public partial struct Mat3f : IEquatable<Mat3f>, IBinaryStreamMath3D<Mat3f>, IGLTypeMath3D, IGLMatrix, IGenericStream
     {
         /// <summary>
         /// The first Column.
@@ -317,7 +317,48 @@ namespace Kraggs.Graphics.Math3D
 
         #endregion
 
-        #region Static Arithmetic Functions        
+        #region Euler Angles
+
+        /// <summary>
+        /// Creates a 3D 3 * 3 homogeneous rotation matrix from an euler angle.
+        /// </summary>
+        /// <param name="angle"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat3f CreateOrientate3(float angle)
+        {
+            float c = (float)Math.Cos(angle);
+            float s = (float)Math.Cos(angle);
+
+            Mat3f result;
+            result.c0.x = c;
+            result.c0.y = s;
+            result.c0.z = 0.0f;
+            result.c1.x = -s;
+            result.c1.y = c;
+            result.c1.z = 0.0f;
+            result.c2 = Vec3f.UnitZ;
+
+            return result;
+
+        }
+
+        /// <summary>
+        /// Creates a 3D 3 * 3 rotation matrix from euler angles (Y * X * Z).
+        /// </summary>
+        /// <param name="angles"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat3f CreateOrientate3(Vec3f angles)
+        {
+            return (Mat3f)(Mat4f.CreateYawPitchRoll(angles.x, angles.y, angles.z));
+        }
+
+        #endregion
+
+        #region Static Arithmetic Functions
 
         /// <summary>
         /// Adds two matrices component wise.
@@ -977,6 +1018,399 @@ namespace Kraggs.Graphics.Math3D
             }
 
             return sb.ToString();
+        }
+
+        #endregion
+
+        #region IGLMatrix Implementation
+
+        /// <summary>
+        /// Number of columns in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMatrix.ColumnCount
+        {
+            get { return 3; }
+        }
+
+        /// <summary>
+        /// Number of rows in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMatrix.RowCount
+        {
+            get { return 3; }
+        }
+
+        /// <summary>
+        /// Is this a square matrix aka columncount=rowcount
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMatrix.IsSquareMatrix
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Returns the dotnet type of this components.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        Type IGLMath.BaseType
+        {
+            get { return typeof(Mat3f); }
+        }
+
+        /// <summary>
+        /// The number of components totaly in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.ComponentCount
+        {
+            get { return 9; }
+        }
+
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Mat3f));
+
+        /// <summary>
+        /// Returns the inmemory size in bytes of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.SizeInBytes
+        {
+            get { return Mat3f.SizeInBytes; }
+        }
+
+        /// <summary>
+        /// Returns the gl enum for base compoenent.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLBaseType
+        {
+            get { return GLConstants.GL_BASE_FLOAT; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL attribute type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLAttributeType
+        {
+            get { return GLConstants.FLOAT_MAT3; }
+        }
+
+        /// <summary>
+        /// Returns the opengl uniform type enum.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLUniformType
+        {
+            get { return GLConstants.FLOAT_MAT3; }
+        }
+
+        /// <summary>
+        /// Returns wether this is a matrix (true)
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMath.IsMatrix
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        #region IGLTypeMath3D
+
+        private static readonly IGLDescriptionMath3D GLTypeDescription = new Mat3fGLDescription();
+
+        /// <summary>
+        /// Returns an object with description of this GL Type.
+        /// </summary>
+        public IGLDescriptionMath3D GetGLTypeDescription
+        {
+            get
+            {
+                Debug.Assert(Marshal.SizeOf(typeof(Mat3fGLDescription)) == 0);
+
+                return GetGLTypeDescription;
+            }
+        }
+
+        /// <summary>
+        /// Very private desc struct for this type.
+        /// </summary>
+        private struct Mat3fGLDescription : IGLDescriptionMath3D
+        {
+            Type IGLDescriptionMath3D.BaseType
+            {
+                get { return typeof(float); }
+            }
+
+            int IGLDescriptionMath3D.ComponentCount
+            {
+                get { return 9; }
+            }
+
+            int IGLDescriptionMath3D.SizeInBytes
+            {
+                get { return 36; }
+            }
+
+            int IGLDescriptionMath3D.GLBaseType
+            {
+                get { return GLConstants.GL_BASE_FLOAT; }
+            }
+
+            int IGLDescriptionMath3D.GLAttributeType
+            {
+                get { return GLConstants.FLOAT_MAT3; }
+            }
+
+            int IGLDescriptionMath3D.GLUniformType
+            {
+                get { return GLConstants.FLOAT_MAT3; }
+            }
+
+            bool IGLDescriptionMath3D.IsMatrix
+            {
+                get { return true; }
+            }
+
+            bool IGLDescriptionMath3D.IsRowMajor
+            {
+                get { return false; }
+            }
+
+            int IGLDescriptionMath3D.Columns
+            {
+                get { return 3; }
+            }
+
+            int IGLDescriptionMath3D.Rows
+            {
+                get { return 3; }
+            }
+        }
+
+        #endregion
+
+        #region IGenericStream Implementation
+
+        /// <summary>
+        /// Writes matrix to stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="vec"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        void IGenericStream.WriteStream(System.IO.BinaryWriter writer, object matrix)
+        {
+            Mat3f m = (Mat3f)matrix;
+
+            var arr = m.ToArray();
+
+            for (int i = 0; i < arr.Length; i++)
+                writer.Write(arr[i]);
+
+            //writer.Write(m.c0.x);
+            //writer.Write(m.c0.y);
+            //writer.Write(m.c1.x);
+            //writer.Write(m.c1.y);
+        }
+
+        /// <summary>
+        /// Reads in a new vector from stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        object IGenericStream.ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Mat3f(
+                reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(),
+                reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(),
+                reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+        }
+
+        #endregion
+
+        #region IBinaryStreamMath3D Implementation
+
+        /// <summary>
+        /// Writes an array of Mat3f elements to a stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public unsafe void WriteStream(System.IO.Stream writer, Mat3f[] elements, int index, int length)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            var elementCount = Math.Min(elements.Length, index + length) - index;
+            //var sizeinbytes = Marshal.SizeOf(typeof(Mat4f));
+
+            var buf = new byte[elementCount * Mat3f.SizeInBytes];
+
+            fixed (float* ptr = &elements[index].c0.x)
+            {
+                Marshal.Copy((IntPtr)ptr, buf, 0, buf.Length);
+            }
+
+            writer.Write(buf, 0, buf.Length);
+        }
+
+
+        /// <summary>
+        /// Writes an array of Mat3f's to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Mat3f[] elements, int index, int length)
+        {
+            if (elements == null && elements.Length == 0)
+                return;
+
+            int len = Math.Min(elements.Length, index + length);
+
+            if (len > 8)
+            {
+                for (int i = index; i < len; i++)
+                {
+                    writer.Write(elements[i].c0.x);
+                    writer.Write(elements[i].c0.y);
+                    writer.Write(elements[i].c0.z);
+                    writer.Write(elements[i].c1.x);
+                    writer.Write(elements[i].c1.y);
+                    writer.Write(elements[i].c1.z);
+                    writer.Write(elements[i].c2.x);
+                    writer.Write(elements[i].c2.y);
+                    writer.Write(elements[i].c2.z);
+                }
+            }
+            else
+                WriteStream(writer.BaseStream, elements, index, length);
+        }
+
+        /// <summary>
+        /// Reads in a number of matrices from a stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public unsafe int ReadStream(System.IO.Stream reader, Mat3f[] elements, int index, int length)
+        {
+            Debug.Assert(elements != null && elements.Length > 0);
+
+            int count = 0;
+            //int sizeinbytes = Marshal.SizeOf(typeof(Mat3f));
+            var elementCount = Math.Min(elements.Length, index + length) - index;
+
+            var buf = new byte[elementCount * Mat3f.SizeInBytes];
+            count = reader.Read(buf, 0, buf.Length);
+
+            fixed (float* ptr = &elements[index].c0.x)
+            {
+                Marshal.Copy(buf, 0, (IntPtr)ptr, count * Mat3f.SizeInBytes);
+            }
+
+            if (count == buf.Length)
+                return elementCount;
+            else
+                return count % Mat3f.SizeInBytes;
+        }
+
+
+        /// <summary>
+        /// Reads an array of Mat3f's from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public int ReadStream(System.IO.BinaryReader reader, Mat3f[] elements, int index, int length)
+        {
+            Debug.Assert(elements != null && elements.Length > 0);
+
+            int count = 0;
+            int len = Math.Min(elements.Length, index + length);
+
+            if (len < 8)
+            {
+                for (int i = index; i < len; i++)
+                {
+                    //elements[i] = ReadStream(reader);
+                    elements[i].c0.x = reader.ReadSingle();
+                    elements[i].c0.y = reader.ReadSingle();
+                    elements[i].c0.z = reader.ReadSingle();
+                    elements[i].c1.x = reader.ReadSingle();
+                    elements[i].c1.y = reader.ReadSingle();
+                    elements[i].c1.z = reader.ReadSingle();
+                    elements[i].c2.x = reader.ReadSingle();
+                    elements[i].c2.y = reader.ReadSingle();
+                    elements[i].c2.z = reader.ReadSingle();
+
+                    count++;
+                }
+
+                return count;
+            }
+            else
+                return ReadStream(reader.BaseStream, elements, index, length);
+            
+        }
+
+        /// <summary>
+        /// Writes a single Mat4f to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="element"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Mat3f element)
+        {
+            writer.Write(element.c0.x);
+            writer.Write(element.c0.y);
+            writer.Write(element.c0.z);
+            writer.Write(element.c1.x);
+            writer.Write(element.c1.y);
+            writer.Write(element.c1.z);
+            writer.Write(element.c2.x);
+            writer.Write(element.c2.y);
+            writer.Write(element.c2.z);
+        }
+
+
+        /// <summary>
+        /// Reads a single Mat3f from a binary Reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public Mat3f ReadStream(System.IO.BinaryReader reader)
+        {
+            return new Mat3f(
+                reader.ReadSingle(), // x
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle(), // y
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle(), // z
+                reader.ReadSingle(),
+                reader.ReadSingle()
+                );
         }
 
         #endregion

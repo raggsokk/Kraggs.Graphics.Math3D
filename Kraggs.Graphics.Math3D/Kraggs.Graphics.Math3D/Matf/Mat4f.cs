@@ -10,7 +10,7 @@ namespace Kraggs.Graphics.Math3D
 {
     //[DebuggerDisplay("TODO")]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Mat4f : IEquatable<Mat4f>
+    public partial struct Mat4f : IEquatable<Mat4f>, IBinaryStreamMath3D<Mat4f>, IGLTypeMath3D, IGLMatrix, IGenericStream
     {
         /// <summary>
         /// The First Column.
@@ -510,7 +510,7 @@ namespace Kraggs.Graphics.Math3D
         /// <returns></returns>
         public static Mat4f CreateRotation(float angleInDegrees, Vec3f axis)
         {
-            float a = MathFunctions.Radians(angleInDegrees);
+            float a = MathF.ToRadians(angleInDegrees);
             float c = (float)Math.Cos(a);
             float s = (float)Math.Sin(a);
 
@@ -572,7 +572,7 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreateRotationX(float angleInDegrees)
         {
-            float r = MathFunctions.Radians(angleInDegrees);
+            float r = MathF.ToRadians(angleInDegrees);
             float c = (float)Math.Cos(r);
             float s = (float)Math.Sin(r);
 
@@ -595,7 +595,7 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Mat4f CreateRotationY(float angleInDegrees)
         {
-            float r = MathFunctions.Radians(angleInDegrees);
+            float r = MathF.ToRadians(angleInDegrees);
             float c = (float)Math.Cos(r);
             float s = (float)Math.Sin(r);
 
@@ -618,7 +618,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Mat4f CreateRotationZ(float angleInDegrees)
         {
-            float r = MathFunctions.Radians(angleInDegrees);
+            //float r = MathFunctions.Radians(angleInDegrees);
+            float r = MathF.ToRadians(angleInDegrees);
             float c = (float)Math.Cos(r);
             float s = (float)Math.Sin(r);
 
@@ -737,7 +738,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreatePerspective(float fovy, float aspect, float near, float far)
         {
-            float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            //float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            float range = MathF.Tan(MathF.ToRadians(fovy / 2.0f)) * near;
             float left = -range * aspect;
             float right = range * aspect;
             float bottom = -range;
@@ -767,7 +769,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreatePerspectiveFov(float fov, float width, float height, float near, float far)
         {
-            float rad = MathFunctions.Radians(fov);
+            //float rad = MathFunctions.Radians(fov);
+            float rad = MathF.ToRadians(fov);
             float h = (float)Math.Cos(0.5f * rad) / (float)Math.Sin(0.5f * rad);
             float w = h * height / width;
 
@@ -793,7 +796,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreateInfinitePerspective(float fovy, float aspect, float near)
         {
-            float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            //float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            float range = MathF.Tan(MathF.ToRadians(fovy / 2.0f)) * near;
             float left = -range * aspect;
             float right = range * aspect;
             float bottom = -range;
@@ -821,7 +825,8 @@ namespace Kraggs.Graphics.Math3D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]        
         public static Mat4f CreateTweakedInfinitePerspective(float fovy, float aspect, float near)
         {
-            float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            //float range = (float)Math.Tan(MathFunctions.Radians(fovy / 2.0f)) * near;
+            float range = MathF.Tan(MathF.ToRadians(fovy / 2.0f)) * near;
             float left = -range * aspect;
             float right = range * aspect;
             float bottom = -range;
@@ -951,6 +956,268 @@ namespace Kraggs.Graphics.Math3D
             result.c3.z =  Vec3f.Dot(f, eye);
 
             return result;
+        }
+
+        #endregion
+
+        #region Static EulerAngles
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from an euler angle X.
+        /// </summary>
+        /// <param name="AngleX"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateEulerAngleX(float AngleX)
+        {
+            float cosX = (float)Math.Cos(AngleX);
+            float sinX = (float)Math.Sin(AngleX);
+
+            return new Mat4f(
+                1.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, cosX, sinX, 0.0f,
+                0.0f, -sinX, cosX, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f
+                );
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from an euler angle Y.
+        /// </summary>
+        /// <param name="AngleY"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateEulerAngleY(float AngleY)
+        {
+            float cosY = (float)Math.Cos(AngleY);
+            float sinY = (float)Math.Sin(AngleY);
+
+            return new Mat4f(
+                    cosY, 0.0f, sinY, 0.0f,
+                    0.0f, 1.0f, 0.0f, 0.0f,
+                    -sinY, 0.0f, cosY, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                );
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from an euler angle Z.
+        /// </summary>
+        /// <param name="AngleZ"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateEulerAngleZ(float AngleZ)
+        {
+            float cosZ = (float)Math.Cos(AngleZ);
+            float sinZ = (float)Math.Sin(AngleZ);
+
+            return new Mat4f(
+                    cosZ, sinZ, 0.0f, 0.0f,
+                    -sinZ, cosZ, 0.0f, 0.0f,
+                    0.0f, 0.0f, 1.0f, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                );
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (X * Y).
+        /// </summary>
+        /// <param name="AngleX"></param>
+        /// <param name="AngleY"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]        
+        public static Mat4f CreateEulerAngleXY(float AngleX, float AngleY)
+        {
+            float cosX = (float)Math.Cos(AngleX);
+            float sinX = (float)Math.Sin(AngleX);
+            float cosY = (float)Math.Cos(AngleY);
+            float sinY = (float)Math.Sin(AngleY);
+
+            return new Mat4f(
+                    cosY, -sinX * sinY, cosX * sinY, 0.0f,
+                    0.0f,  cosX,      sinX,          0.0f,
+                    -sinY, -sinX * cosY, cosX * cosY, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                );
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * X).
+        /// </summary>
+        /// <param name="AngleY"></param>
+        /// <param name="AngleX"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleYX(float AngleY, float AngleX)
+        {
+            float cosX = (float)Math.Cos(AngleX);
+            float sinX = (float)Math.Sin(AngleX);
+            float cosY = (float)Math.Cos(AngleY);
+            float sinY = (float)Math.Sin(AngleY);
+
+            return new Mat4f(
+                    cosY, 0.0f, sinY, 0.0f,
+                    -sinX * sinY, cosX, sinX * cosY, 0.0f,
+                    -cosX * sinY, -sinX, cosX * cosY, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                );
+
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (X * Z).
+        /// </summary>
+        /// <param name="AngleX"></param>
+        /// <param name="AngleZ"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleXZ(float AngleX, float AngleZ)
+        {
+            return CreateEulerAngleX(AngleX) * CreateEulerAngleZ(AngleZ);
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Z * X).
+        /// </summary>
+        /// <param name="AngleZ"></param>
+        /// <param name="AngleX"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleZX(float AngleZ, float AngleX)
+        {
+            return CreateEulerAngleZ(AngleZ) * CreateEulerAngleX(AngleX);
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * Z).
+        /// </summary>
+        /// <param name="AngleY"></param>
+        /// <param name="AngleZ"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleYZ(float AngleY, float AngleZ)
+        {
+            float cosY = (float)Math.Cos(AngleY);
+            float sinY = (float)Math.Sin(AngleY);
+            float cosZ = (float)Math.Cos(AngleZ);
+            float sinZ = (float)Math.Sin(AngleZ);
+
+            throw new NotImplementedException();
+
+            //return new Mat4f(
+
+            //    );
+
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Z * Y).
+        /// </summary>
+        /// <param name="AngleZ"></param>
+        /// <param name="AngleY"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleZY(float AngleZ, float AngleY)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * X * Z).
+        /// CreateYawPitchRoll and CreateEulerAngleYXZ are the same result.
+        /// </summary>
+        /// <param name="yaw"></param>
+        /// <param name="pitch"></param>
+        /// <param name="roll"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateEulerAngleYXZ(float yaw, float pitch, float roll)
+        {
+            float tmp_ch = (float)Math.Cos(yaw);
+            float tmp_sh = (float)Math.Sin(yaw);
+            float tmp_cp = (float)Math.Cos(pitch);
+            float tmp_sp = (float)Math.Sin(pitch);
+            float tmp_cb = (float)Math.Cos(roll);
+            float tmp_sb = (float)Math.Sin(roll);
+
+            Mat4f result; // = Mat4f.Zero;
+            result.c0.x = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
+            result.c0.y = tmp_sb * tmp_cp;
+            result.c0.z = -tmp_sh * tmp_cb + tmp_ch * tmp_sp * tmp_sb;
+            result.c0.w = 0.0f;
+            result.c1.x = -tmp_ch * tmp_sb + tmp_sh * tmp_sp * tmp_cb;
+            result.c1.y = tmp_cb * tmp_cp;
+            result.c1.z = tmp_sb * tmp_sh + tmp_ch * tmp_sp * tmp_cb;
+            result.c1.w = 0.0f;
+            result.c2.x = tmp_sh * tmp_cp;
+            result.c2.y = -tmp_sp;
+            result.c2.z = tmp_ch * tmp_cp;
+            result.c2.w = 0.0f;
+
+            result.c3 = Vec4f.UnitW;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * X * Z).
+        /// CreateYawPitchRoll and CreateEulerAngleYXZ are the same result.
+        /// </summary>
+        /// <param name="yaw"></param>
+        /// <param name="pitch"></param>
+        /// <param name="roll"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateYawPitchRoll(float yaw, float pitch, float roll)
+        {
+            float tmp_ch = (float)Math.Cos(yaw);
+            float tmp_sh = (float)Math.Sin(yaw);
+            float tmp_cp = (float)Math.Cos(pitch);
+            float tmp_sp = (float)Math.Sin(pitch);
+            float tmp_cb = (float)Math.Cos(roll);
+            float tmp_sb = (float)Math.Sin(roll);
+
+            Mat4f result; // = Mat4f.Zero;
+            result.c0.x = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
+            result.c0.y = tmp_sb * tmp_cp;
+            result.c0.z = -tmp_sh * tmp_cb + tmp_ch * tmp_sp * tmp_sb;
+            result.c0.w = 0.0f;
+            result.c1.x = -tmp_ch * tmp_sb + tmp_sh * tmp_sp * tmp_cb;
+            result.c1.y = tmp_cb * tmp_cp;
+            result.c1.z = tmp_sb * tmp_sh + tmp_ch * tmp_sp * tmp_cb;
+            result.c1.w = 0.0f;
+            result.c2.x = tmp_sh * tmp_cp;
+            result.c2.y = -tmp_sp;
+            result.c2.z = tmp_ch * tmp_cp;
+            result.c2.w = 0.0f;
+
+            result.c3 = Vec4f.UnitW;
+
+            return result;
+
+        }
+
+        /// <summary>
+        /// Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles (Y * X * Z).
+        /// </summary>
+        /// <param name="angles"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Mat4f CreateOrientate4(Vec3f angles)
+        {
+            return CreateYawPitchRoll(angles.z, angles.x, angles.y);
         }
 
         #endregion
@@ -1487,9 +1754,9 @@ namespace Kraggs.Graphics.Math3D
         {
             return new Mat4f()
             {
-                c0 = new Vec4f(m.c0),
-                c1 = new Vec4f(m.c1),
-                c2 = new Vec4f(m.c2),
+                c0 = new Vec4f(m.c0, 0.0f),
+                c1 = new Vec4f(m.c1, 0.0f),
+                c2 = new Vec4f(m.c2, 0.0f),
                 c3 = Vec4f.UnitW,
             };
         }
@@ -1641,6 +1908,410 @@ namespace Kraggs.Graphics.Math3D
             }
 
             return sb.ToString();
+        }
+
+        #endregion
+
+        #region IGLMatrix Implementation
+
+        /// <summary>
+        /// Number of columns in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMatrix.ColumnCount
+        {
+            get { return 4; }
+        }
+
+        /// <summary>
+        /// Number of rows in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMatrix.RowCount
+        {
+            get { return 4; }
+        }
+
+        /// <summary>
+        /// Is this a square matrix aka columncount=rowcount
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMatrix.IsSquareMatrix
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Returns the dotnet type of this components.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        Type IGLMath.BaseType
+        {
+            get { return typeof(Mat4f); }
+        }
+
+        /// <summary>
+        /// The number of components totaly in this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.ComponentCount
+        {
+            get { return 16; }
+        }
+
+        public static readonly int SizeInBytes = Marshal.SizeOf(typeof(Mat4f));
+
+        /// <summary>
+        /// Returns the inmemory size in bytes of this matrix.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.SizeInBytes
+        {
+            get { return Mat4f.SizeInBytes; }
+        }
+
+        /// <summary>
+        /// Returns the gl enum for base compoenent.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLBaseType
+        {
+            get { return GLConstants.GL_BASE_FLOAT; }
+        }
+
+        /// <summary>
+        /// Returns the OpenGL attribute type enum
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLAttributeType
+        {
+            get { return GLConstants.FLOAT_MAT4; }
+        }
+
+        /// <summary>
+        /// Returns the opengl uniform type enum.
+        /// </summary>
+        [DebuggerNonUserCode()]
+        int IGLMath.GLUniformType
+        {
+            get { return GLConstants.FLOAT_MAT4; }
+        }
+
+        /// <summary>
+        /// Returns wether this is a matrix (true)
+        /// </summary>
+        [DebuggerNonUserCode()]
+        bool IGLMath.IsMatrix
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        #region IGLTypeMath3D
+
+        private static readonly IGLDescriptionMath3D GLTypeDescription = new Mat4fGLDescription();
+
+        /// <summary>
+        /// Returns an object with description of this GL Type.
+        /// </summary>
+        public IGLDescriptionMath3D GetGLTypeDescription
+        {
+            get
+            {
+                Debug.Assert(Marshal.SizeOf(typeof(Mat4fGLDescription)) == 0);
+
+                return GetGLTypeDescription;
+            }
+        }
+
+        /// <summary>
+        /// Very private desc struct for this type.
+        /// </summary>
+        private struct Mat4fGLDescription : IGLDescriptionMath3D
+        {
+            Type IGLDescriptionMath3D.BaseType
+            {
+                get { return typeof(float); }
+            }
+
+            int IGLDescriptionMath3D.ComponentCount
+            {
+                get { return 16; }
+            }
+
+            int IGLDescriptionMath3D.SizeInBytes
+            {
+                get { return 64; }
+            }
+
+            int IGLDescriptionMath3D.GLBaseType
+            {
+                get { return GLConstants.GL_BASE_FLOAT; }
+            }
+
+            int IGLDescriptionMath3D.GLAttributeType
+            {
+                get { return GLConstants.FLOAT_MAT4; }
+            }
+
+            int IGLDescriptionMath3D.GLUniformType
+            {
+                get { return GLConstants.FLOAT_MAT4; }
+            }
+
+            bool IGLDescriptionMath3D.IsMatrix
+            {
+                get { return true; }
+            }
+
+            bool IGLDescriptionMath3D.IsRowMajor
+            {
+                get { return false; }
+            }
+
+            int IGLDescriptionMath3D.Columns
+            {
+                get { return 4; }
+            }
+
+            int IGLDescriptionMath3D.Rows
+            {
+                get { return 4; }
+            }
+        }
+
+        #endregion
+
+        #region IGenericStream Implementation
+
+        //[DebuggerNonUserCode()]
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public void WriteStream(System.IO.BinaryWriter writer, object matrix)
+        //{
+        //    Mat4f m = (Mat4f)matrix;
+
+        //    writer.Write(m.c0.x);
+        //    writer.Write(m.c0.y);
+        //    writer.Write(m.c0.z);
+        //    writer.Write(m.c0.w);
+        //    writer.Write(m.c1.x);
+        //    writer.Write(m.c1.y);
+        //    writer.Write(m.c1.z);
+        //    writer.Write(m.c1.w);
+        //    writer.Write(m.c2.x);
+        //    writer.Write(m.c2.y);
+        //    writer.Write(m.c2.z);
+        //    writer.Write(m.c2.w);
+        //    writer.Write(m.c3.x);
+        //    writer.Write(m.c3.y);
+        //    writer.Write(m.c3.z);
+        //    writer.Write(m.c3.w);
+        //}
+
+        /// <summary>
+        /// Writes matrix to stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="vec"></param>
+        [DebuggerNonUserCode()]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)] // not working with unsafe code!
+        unsafe void IGenericStream.WriteStream(System.IO.BinaryWriter writer, object matrix)
+        {            
+            Mat4f m = (Mat4f)matrix;
+
+            var buf = new byte[Mat4f.SizeInBytes];
+            float* ptr = &m.c0.x;
+
+            Marshal.Copy((IntPtr)ptr, buf, 0, buf.Length);
+            writer.Write(buf, 0, buf.Length);
+
+        }
+
+        /// <summary>
+        /// Reads in a new vector from stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [Obsolete("Use functions in IBinaryStreamMath3D instead")]
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)] // not working with unsafe code!
+        unsafe object IGenericStream.ReadStream(System.IO.BinaryReader reader)
+        {
+            var buf = new byte[Mat4f.SizeInBytes];
+
+            reader.Read(buf, 0, buf.Length);
+
+            Mat4f result;
+
+            fixed (byte* ptr = &buf[0])
+            {
+                Mat4f* p = (Mat4f*)ptr;
+
+                result = *p;
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region IBinaryStreamMath3D Implementation
+
+        /// <summary>
+        /// Writes an array of Mat4f elements to a stream.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public unsafe void WriteStream(System.IO.Stream writer, Mat4f[] elements, int index, int length)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            var elementCount = Math.Min(elements.Length, index + length) - index;
+            //var sizeinbytes = Marshal.SizeOf(typeof(Mat4f));
+
+            var buf = new byte[elementCount * Mat4f.SizeInBytes];
+
+            fixed (float* ptr = &elements[index].c0.x)
+            {
+                Marshal.Copy((IntPtr)ptr, buf, 0, buf.Length);
+            }
+
+            writer.Write(buf, 0, buf.Length);
+        }
+
+        /// <summary>
+        /// Writes out an array of Mat4f's to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        [DebuggerNonUserCode()]
+        public void WriteStream(System.IO.BinaryWriter writer, Mat4f[] elements, int index, int length)
+        {
+            if (elements == null || elements.Length == 0)
+                return;
+
+            this.WriteStream(writer.BaseStream, elements, index, length);
+            //if (elements == null || elements.Length == 0)
+            //    return;
+
+            //var elementCount = Math.Min(elements.Length, index + length) - index;
+            //var sizeinbytes = Marshal.SizeOf(typeof(Mat4f));
+
+            //var buf = new byte[elementCount * sizeinbytes];
+
+            //fixed (float* ptr = &elements[index].c0.x)
+            //{
+            //    Marshal.Copy((IntPtr)ptr, buf, 0, buf.Length);
+            //}
+
+            //writer.Write(buf, 0, buf.Length);
+        }
+
+        /// <summary>
+        /// Reads in a number of matrices from a stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public unsafe int ReadStream(System.IO.Stream reader, Mat4f[] elements, int index, int length)
+        {
+            Debug.Assert(elements != null && elements.Length > 0);
+
+            int count = 0;
+            //int sizeinbytes = Marshal.SizeOf(typeof(Mat4f));
+            var elementCount = Math.Min(elements.Length, index + length) - index;
+
+            var buf = new byte[elementCount * Mat3f.SizeInBytes];
+            count = reader.Read(buf, 0, buf.Length);
+
+            fixed (float* ptr = &elements[index].c0.x)
+            {
+                Marshal.Copy(buf, 0, (IntPtr)ptr, count * Mat3f.SizeInBytes);
+            }
+
+            if (count == buf.Length)
+                return elementCount;
+            else
+                return count % Mat3f.SizeInBytes;
+        }
+
+
+        /// <summary>
+        /// Reads in an array of Mat4f's from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="elements"></param>
+        /// <param name="index"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public int ReadStream(System.IO.BinaryReader reader, Mat4f[] elements, int index, int length)
+        {
+            return ReadStream(reader.BaseStream, elements, index, length);
+            //Debug.Assert(elements != null && elements.Length > 0);
+
+            //int count = 0;
+            //int sizeinbytes = Marshal.SizeOf(typeof(Mat4f));
+            //var elementCount = Math.Min(elements.Length, index + length) - index;
+
+            //var buf = new byte[elementCount * sizeinbytes];
+            //count = reader.Read(buf, 0, buf.Length);
+
+            //fixed (float* ptr = &elements[index].c0.x)
+            //{
+            //    Marshal.Copy(buf, 0, (IntPtr)ptr, count * sizeinbytes);
+            //}
+
+            //if (count == buf.Length)
+            //    return elementCount;
+            //else
+            //    return count % sizeinbytes;
+        }
+
+        /// <summary>
+        /// Write a single Mat4f to a binary writer.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="element"></param>
+        [DebuggerNonUserCode()]
+        public unsafe void WriteStream(System.IO.BinaryWriter writer, Mat4f element)
+        {
+            float* ptr = &element.c0.x;
+            for (int i = 0; i < 16; i++)
+                writer.Write(ptr[i]);
+        }
+
+        /// <summary>
+        /// Reads a single Mat4f from a binary reader.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        public unsafe Mat4f ReadStream(System.IO.BinaryReader reader)
+        {
+            Mat4f m = Mat4f.Zero;
+
+            float* ptr = &m.c0.x;
+
+            //var buf = new byte[16 * sizeof(float)];
+            //reader.Read(buf, 0, buf.Length);
+            //Marshal.Copy(buf, 0, (IntPtr)ptr, buf.Length);
+
+            for (int i = 0; i < 16; i++)
+                ptr[i] = reader.ReadSingle();
+
+            return m;
         }
 
         #endregion

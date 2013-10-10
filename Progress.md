@@ -115,6 +115,68 @@ Milestone 8
 Milestone 9
 	Quaternions
 
+Milestone 10
+	MathFunction Reorg.
+		MathF 		(float version of Math)
+		FastMath 	(fast version of MathF)
+	Lerp 	(Linearly interpolates between two vectors.) (Is this SmoothStep?)
+	Slerp 	( torque-minimal path between two vectors.)
+	NLerp	(just normalized Lerp)
+		
+Milestone 11
+	Vec2i
+	Vec3i
+	Vec4i
+		ToString
+		GetHashCode
+		operator == !=
+		operator (Vec,int) + - * /
+		operator (int,Vec) + - * /
+		operator (Vec,Vec)   + - * /
+		operator (vec, int) << >>
+		operator VecXf (VecXi)
+		operator VecXi (VecXf)
+		Equals
+	Vector (Vec,Vec), (Vec, int)
+		Add 
+		Subtract
+		Multiply
+		Divide
+		Negate
+		HigherMultiple
+		LowerMultiple
+		ComponentMultiply
+		ComponentAdd
+		ComponentMax
+		ComponentMin
+		
+Milestone 12
+		noop (forgotten).
+		
+Milestone 13
+	reimplement GL Generics to use
+		a separate description struct.
+		This struct should have no instance
+		members but only functions/properties.
+	extend StreamExtensions maybe rename to binarystreamextension?
+		
+	Sign the assembly.
+	Release builds should be put in own directory.
+		
+Milestone x++	
+	Color4f
+		ToString
+		GetHashCode
+		operator == !=
+		operator (Vec,float) + - * /
+		operator (float,Vec) + - * /
+		operator (Vec,Vec)   + - * /
+		Equals
+		Lerp (each component separetely)
+
+Milestone x++
+	noise
+
 Release 1
 	Milestone 1
 	Milestone 2
@@ -128,3 +190,7 @@ Release 3
 	Milestone 7
 	Milestone 8
 	Milestone 9
+Release 4
+	Milestone 10
+	Milestone 11
+	Milestone 13
