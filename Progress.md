@@ -150,7 +150,10 @@ Milestone 11
 		ComponentMax
 		ComponentMin
 		
-Mileston 13
+Milestone 12
+		noop (forgotten).
+		
+Milestone 13
 	reimplement GL Generics to use
 		a separate description struct.
 		This struct should have no instance
@@ -190,4 +193,4 @@ Release 3
 Release 4
 	Milestone 10
 	Milestone 11
-	
+	Milestone 13
