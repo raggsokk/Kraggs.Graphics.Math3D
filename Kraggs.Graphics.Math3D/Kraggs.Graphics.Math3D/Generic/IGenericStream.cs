@@ -9,7 +9,7 @@ namespace Kraggs.Graphics.Math3D
     /// <summary>
     /// Generic Stream Functions for reading / writing a element.
     /// </summary>
-    //[Obsolete("Use functions in IBinaryStreamMath3D instead")]
+    [Obsolete("Use functions in IBinaryStreamMath3D instead")]
     public interface IGenericStream
     {
         /// <summary>
