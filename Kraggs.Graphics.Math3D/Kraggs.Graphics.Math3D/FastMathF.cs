@@ -260,5 +260,11 @@ namespace Kraggs.Graphics.Math3D
         }
 
         #endregion
+
+        #region Other FastMath Functions
+
+        //public static int FastFloor(
+
+        #endregion
     }
 }
