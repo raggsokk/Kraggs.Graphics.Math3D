@@ -31,6 +31,19 @@ namespace Kraggs.Graphics.Math3D
         #region Constructors
 
         /// <summary>
+        /// Creates a vector with all components set to value.
+        /// </summary>
+        /// <param name="value"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec3f(float value)
+        {
+            this.x = value;
+            this.y = value;
+            this.z = value;
+        }
+
+        /// <summary>
         /// Constructs a vector from individualy components.
         /// </summary>
         /// <param name="x"></param>
@@ -79,6 +92,11 @@ namespace Kraggs.Graphics.Math3D
         /// A Vec3f with Z component 1 and all others zero.
         /// </summary>
         public static readonly Vec3f UnitZ = new Vec3f() { x = 0.0f, y = 0.0f, z = 1.0f };
+
+        /// <summary>
+        /// A Vec3f with all components set to 1.
+        /// </summary>
+        public static readonly Vec3f One = new Vec3f() { x = 1.0f, y = 1.0f, z = 1.0f };
 
         /// <summary>
         /// Returns the unsqrt length of the vector.

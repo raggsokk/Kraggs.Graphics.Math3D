@@ -162,7 +162,12 @@ Milestone 13
 		
 	Sign the assembly.
 	Release builds should be put in own directory.
-		
+
+Milestone 14
+	noise
+	random
+
+	
 Milestone x++	
 	Color4f
 		ToString
@@ -174,8 +179,6 @@ Milestone x++
 		Equals
 		Lerp (each component separetely)
 
-Milestone x++
-	noise
 
 Release 1
 	Milestone 1
@@ -194,3 +197,6 @@ Release 4
 	Milestone 10
 	Milestone 11
 	Milestone 13
+Release 5
+	Milestone 14
+	...

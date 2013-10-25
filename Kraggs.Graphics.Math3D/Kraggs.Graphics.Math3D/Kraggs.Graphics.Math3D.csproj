@@ -58,6 +58,9 @@
     <Compile Include="Matf\Mat4f.cs" />
     <Compile Include="MathF.cs" />
     <Compile Include="MathFunctions.cs" />
+    <Compile Include="Noise\Noise.cs" />
+    <Compile Include="Noise\Vec3f_Noise.cs" />
+    <Compile Include="Noise\Vec4f_Noise.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quaternion\Quatf.cs" />
     <Compile Include="StreamExtensions\BinaryStreamExtensions.cs" />

@@ -440,6 +440,70 @@ namespace Kraggs.Graphics.Math3D
             return (float)Math.Truncate(x);
         }
 
+        /// <summary>
+        /// Returns a value equal to the nearest integer to x.
+        /// The fraction 0.5 will round in a direction chosen by the
+        /// implementation, presumably the direction that is fastest.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Round(float x)
+        {
+            //return (float)Math.Round(x);
+
+            return x < 0 ?
+                (float)((int)(x - 0.5f)) :
+                (float)((int)(x + 0.5f));
+        }
+        /// <summary>
+        /// Returns a value equal to the nearest integer to x.
+        /// A fraction part of 0.5 will round towards the nearest even integer.
+        /// (Bot 3.5 and 4.5 for x will return 4.0)
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float RoundEven(float x)
+        {
+            var Integer = (int)x;
+            float IntegerPart = (float)Integer;
+            float FractionalPart = Fract(x);
+
+            if (FractionalPart > 0.5f || FractionalPart < 0.5f)
+            {
+                return Round(x);
+            }
+            else if((Integer % 2) == 0)
+            {
+                return IntegerPart;
+            }
+            else if (x <= 0.0f)
+            {
+                return IntegerPart - 1.0f;
+            }
+            else
+            {
+                return IntegerPart + 1.0f;
+            }
+
+
+        }
+
+        /// <summary>
+        /// Return x - floor(x).
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Fract(float x)
+        {
+            return x - Floor(x);
+        }
+
         #endregion
 
         /*
