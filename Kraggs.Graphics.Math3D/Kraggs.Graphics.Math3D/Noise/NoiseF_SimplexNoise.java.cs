@@ -8,101 +8,8 @@ using System.Runtime.CompilerServices;
 
 namespace Kraggs.Graphics.Math3D
 {
-    internal static class Noise
-    {
-        #region GLM Implementation Code
-
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static float Mod289(float x)
-        //{
-        //    return x - MathF.Floor(x * 1.0f / 289.0f) * 289.0f;
-        //}
-
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static float Permute(float x)
-        //{
-        //    return Mod289(((x * 34.0f) + 1.0f) * x);
-        //}
-
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static Vec2f Permute(Vec2f x)
-        //{
-        //    throw new NotImplementedException();
-        //    //return Mod289(((x * 34.0f)) + 1.0f) * x);
-        //}
-
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static float TaylorInvSqrt(float r)
-        //{
-        //    return 1.79284291400159f - 0.85373472095314f * r;
-        //}
-
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static Vec2f TaylorInvSqrt(Vec2f r)
-        //{
-        //    return 1.79284291400159f - 0.85373472095314f * r;
-        //}
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static Vec3f TaylorInvSqrt(Vec3f r)
-        //{
-        //    return 1.79284291400159f - 0.85373472095314f * r;
-        //}
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static Vec4f TaylorInvSqrt(Vec4f r)
-        //{
-        //    //Vec4f result;
-        //    //Vec4f.Multiply(ref r, 0.85373472095314f, out result);
-        //    //return 1.79284291400159f - result;
-        //    return 1.79284291400159f - 0.85373472095314f * r;
-        //}
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static Vec2f Fade(Vec2f t)
-        //{
-        //    return (t * t * t) * (t * (t * 6.0f - 15.0f + 10.0f));
-        //}
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static Vec3f Fade(Vec3f t)
-        //{
-        //    return (t * t * t) * (t * (t * 6.0f - 15.0f + 10.0f));
-        //}
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static Vec4f Fade(Vec4f t)
-        //{
-        //    return (t * t * t) * (t * (t * 6.0f - 15.0f + 10.0f));
-        //}
-
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static Vec3f Fract(Vec3f v)
-        //{
-        //    return v - Vec3f.Floor(v);
-        //}
-
-        ////LessThan
-
-        //[DebuggerNonUserCode()]
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //internal static Vec4f Grad4(float j, Vec4f ip)
-        //{
-        //    var pXYZ = Vec3f.Floor(Fract(new Vec3f(j) * (Vec3f)ip) * 7.0f) * ip.z - 1.0f;
-        //    float pW = 1.5f - Vec3f.Dot(Vec3f.Abs(pXYZ), Vec3f.One);
-        //    Vec4f s = new Vec4f(Vec4f.LessThan(new Vec4f(pXYZ, pW), Vec4f.Zero));
-        //    pXYZ = pXYZ + (Vec3f)s * 2.0f - 1.0f * s.w;
-        //    return new Vec4f(pXYZ, pW);
-        //}
-
-        #endregion
-
+    partial class NoiseF
+    {        
         #region SimplexNoise.java
 
         /*
@@ -170,6 +77,8 @@ namespace Kraggs.Graphics.Math3D
             138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
         };
 
+        private static readonly byte[] permMod12;
+
         // Simple skewing factors for the 2D case
         private const float F2 = 0.366025403f; // F2 = 0.5*(sqrt(3.0)-1.0)
         private const float G2 = 0.211324865f; // G2 = (3.0-Math.sqrt(3.0))/6.0
@@ -179,6 +88,15 @@ namespace Kraggs.Graphics.Math3D
         // The skewing and unskewing factors are hairy again for the 4D case
         private const float F4 = 0.309016994f; // F4 = (Math.sqrt(5.0)-1.0)/4.0
         private const float G4 = 0.138196601f;// G4 = (5.0-Math.sqrt(5.0))/20.0
+
+        static NoiseF()
+        {
+            permMod12 = new byte[perm.Length];
+            Debug.Assert(perm.Length == 512);
+
+            for (int i = 0; i < perm.Length; i++)
+                permMod12[i] = (byte)(perm[i] % 12);
+        }
 
         [DebuggerNonUserCode()]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -243,9 +161,12 @@ namespace Kraggs.Graphics.Math3D
             int jj = j & 255;
 
             //TODO: Why are these precomputed when the could easily been inside else blocks below?
-            int gi0 = perm[ii + perm[jj]];
-            int gi1 = perm[ii + i1 + perm[jj + j1]];
-            int gi2 = perm[ii + 1 + perm[jj + 1]];
+            //int gi0 = perm[ii + perm[jj]];
+            //int gi1 = perm[ii + i1 + perm[jj + j1]];
+            //int gi2 = perm[ii + 1 + perm[jj + 1]];
+            int gi0 = permMod12[ii + perm[jj]];
+            int gi1 = permMod12[ii + i1 + perm[jj + j1]];
+            int gi2 = permMod12[ii + 1 + perm[jj + 1]];
 
             // Calculate the contribution from the three corners
             float t0 = 0.5f - x0 * x0 - y0 * y0;
@@ -339,12 +260,15 @@ namespace Kraggs.Graphics.Math3D
             int ii = i & 255;
             int jj = j & 255;
             int kk = k & 255;
-
-            //int gi0 = perm[ii + perm[jj]];
-            int gi0 = perm[ii + perm[jj + perm[kk]]];
-            int gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1]]];
-            int gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2]]];
-            int gi3 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1]]];
+            
+            //int gi0 = perm[ii + perm[jj + perm[kk]]];
+            //int gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1]]];
+            //int gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2]]];
+            //int gi3 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1]]];
+            int gi0 = permMod12[ii + perm[jj + perm[kk]]];
+            int gi1 = permMod12[ii + i1 + perm[jj + j1 + perm[kk + k1]]];
+            int gi2 = permMod12[ii + i2 + perm[jj + j2 + perm[kk + k2]]];
+            int gi3 = permMod12[ii + 1 + perm[jj + 1 + perm[kk + 1]]];
 
             // Calculate the contribution from the four corners            
             //NOTE: Should be 0.5, not 0.6, else the noise is not continuous at simplex boundaries. Same for 4D case.
@@ -480,11 +404,18 @@ namespace Kraggs.Graphics.Math3D
             int jj = j & 255;
             int kk = k & 255;
             int ll = l & 255;
-            int gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]];
-            int gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]];
-            int gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]];
-            int gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]];
-            int gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]];
+
+            //int gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]];
+            //int gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]];
+            //int gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]];
+            //int gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]];
+            //int gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]];
+            int gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]] % 32;
+            int gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]] % 32;
+            int gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]] % 32;
+            int gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]] % 32;
+            int gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]] % 32;
+
             // Calculate the contribution from the five corners
             float t0 = 0.5f - x0*x0 - y0*y0 - z0*z0 - w0*w0;
             if(t0<0)

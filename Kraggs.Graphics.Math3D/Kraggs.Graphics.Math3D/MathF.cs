@@ -504,6 +504,13 @@ namespace Kraggs.Graphics.Math3D
             return x - Floor(x);
         }
 
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Mod(float x, float y)
+        {
+            return x - y * Floor(x / y);
+        }
+
         #endregion
 
         /*

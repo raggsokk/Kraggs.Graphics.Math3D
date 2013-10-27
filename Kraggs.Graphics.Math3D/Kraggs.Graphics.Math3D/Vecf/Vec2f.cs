@@ -482,6 +482,56 @@ namespace Kraggs.Graphics.Math3D
                 y = (float)Math.Truncate(v.y)
             };
         }
+        /// <summary>
+        /// Return x - floor(x).
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Fract(Vec2f v)
+        {
+            return new Vec2f(
+                MathF.Fract(v.x),
+                MathF.Fract(v.y)
+                );
+        }
+
+        /// <summary>
+        /// Modulus. Returns x - y * floor(x / y)
+        /// for each component in x using the floating point value y.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Mod(Vec2f x, float i)
+        {
+            return new Vec2f(
+                MathF.Mod(x.x, i),
+                MathF.Mod(x.y, i)
+                );
+        }
+
+        /// <summary>
+        /// Modulus. Returns x - y * floor(x / y)
+        /// for each component in x using the floating point value y.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2f Mod(Vec2f x, Vec2f i)
+        {
+            return new Vec2f(
+                MathF.Mod(x.x, i.x),
+                MathF.Mod(x.y, i.y)
+                );
+        }
+
+
 
         /// <summary>
         /// Returns the larger components of two vectors.

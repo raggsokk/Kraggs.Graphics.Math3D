@@ -627,6 +627,57 @@ namespace Kraggs.Graphics.Math3D
                 z = (float)Math.Truncate(v.z)
             };
         }
+        /// <summary>
+        /// Return x - floor(x).
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Fract(Vec3f v)
+        {
+            return new Vec3f(
+                MathF.Fract(v.x),
+                MathF.Fract(v.y),
+                MathF.Fract(v.z)
+                );
+        }
+
+        /// <summary>
+        /// Modulus. Returns x - y * floor(x / y)
+        /// for each component in x using the floating point value y.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Mod(Vec3f x, float i)
+        {
+            return new Vec3f(
+                MathF.Mod(x.x, i),
+                MathF.Mod(x.y, i),
+                MathF.Mod(x.z, i)
+                );
+        }
+
+        /// <summary>
+        /// Modulus. Returns x - y * floor(x / y)
+        /// for each component in x using the floating point value y.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Mod(Vec3f x, Vec3f i)
+        {
+            return new Vec3f(
+                MathF.Mod(x.x, i.x),
+                MathF.Mod(x.y, i.y),
+                MathF.Mod(x.z, i.z)                
+                );
+        }
 
 
         /// <summary>

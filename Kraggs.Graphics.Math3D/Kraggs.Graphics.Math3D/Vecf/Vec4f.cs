@@ -35,6 +35,20 @@ namespace Kraggs.Graphics.Math3D
         #region Constructors
 
         /// <summary>
+        /// Constructs a vector with all components set to scalar.
+        /// </summary>
+        /// <param name="scalar"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec4f(float scalar)
+        {
+            this.x = scalar;
+            this.y = scalar;
+            this.z = scalar;
+            this.w = scalar;
+        }
+
+        /// <summary>
         /// Constructs a vector from individualy components.
         /// </summary>
         /// <param name="x"></param>
@@ -610,6 +624,61 @@ namespace Kraggs.Graphics.Math3D
                 z = (float)Math.Truncate(v.z),
                 w = (float)Math.Truncate(v.w)
             };
+        }
+
+        /// <summary>
+        /// Return x - floor(x).
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Fract(Vec4f v)
+        {
+            return new Vec4f(
+                MathF.Fract(v.x),
+                MathF.Fract(v.y),
+                MathF.Fract(v.z),
+                MathF.Fract(v.w)
+                );
+        }
+
+        /// <summary>
+        /// Modulus. Returns x - y * floor(x / y)
+        /// for each component in x using the floating point value y.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Mod(Vec4f x, float i)
+        {
+            return new Vec4f(
+                MathF.Mod(x.x, i),
+                MathF.Mod(x.y, i),
+                MathF.Mod(x.z, i),
+                MathF.Mod(x.w, i)
+                );
+        }
+
+        /// <summary>
+        /// Modulus. Returns x - y * floor(x / y)
+        /// for each component in x using the floating point value y.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec4f Mod(Vec4f x, Vec4f i)
+        {
+            return new Vec4f(
+                MathF.Mod(x.x, i.x),
+                MathF.Mod(x.y, i.y),
+                MathF.Mod(x.z, i.z),
+                MathF.Mod(x.w, i.w)
+                );
         }
 
         /// <summary>
