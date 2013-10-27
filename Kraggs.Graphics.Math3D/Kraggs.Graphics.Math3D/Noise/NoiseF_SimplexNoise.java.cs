@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 namespace Kraggs.Graphics.Math3D
 {
     partial class NoiseF
-    {        
+    {
         #region SimplexNoise.java
 
         /*
