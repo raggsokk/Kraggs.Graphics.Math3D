@@ -31,6 +31,19 @@ namespace Kraggs.Graphics.Math3D
         #region Constructors
 
         /// <summary>
+        /// Creates a vector with all components set to value.
+        /// </summary>
+        /// <param name="value"></param>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vec3f(float value)
+        {
+            this.x = value;
+            this.y = value;
+            this.z = value;
+        }
+
+        /// <summary>
         /// Constructs a vector from individualy components.
         /// </summary>
         /// <param name="x"></param>
@@ -79,6 +92,11 @@ namespace Kraggs.Graphics.Math3D
         /// A Vec3f with Z component 1 and all others zero.
         /// </summary>
         public static readonly Vec3f UnitZ = new Vec3f() { x = 0.0f, y = 0.0f, z = 1.0f };
+
+        /// <summary>
+        /// A Vec3f with all components set to 1.
+        /// </summary>
+        public static readonly Vec3f One = new Vec3f() { x = 1.0f, y = 1.0f, z = 1.0f };
 
         /// <summary>
         /// Returns the unsqrt length of the vector.
@@ -608,6 +626,57 @@ namespace Kraggs.Graphics.Math3D
                 y = (float)Math.Truncate(v.y),
                 z = (float)Math.Truncate(v.z)
             };
+        }
+        /// <summary>
+        /// Return x - floor(x).
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Fract(Vec3f v)
+        {
+            return new Vec3f(
+                MathF.Fract(v.x),
+                MathF.Fract(v.y),
+                MathF.Fract(v.z)
+                );
+        }
+
+        /// <summary>
+        /// Modulus. Returns x - y * floor(x / y)
+        /// for each component in x using the floating point value y.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Mod(Vec3f x, float i)
+        {
+            return new Vec3f(
+                MathF.Mod(x.x, i),
+                MathF.Mod(x.y, i),
+                MathF.Mod(x.z, i)
+                );
+        }
+
+        /// <summary>
+        /// Modulus. Returns x - y * floor(x / y)
+        /// for each component in x using the floating point value y.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        [DebuggerNonUserCode()]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec3f Mod(Vec3f x, Vec3f i)
+        {
+            return new Vec3f(
+                MathF.Mod(x.x, i.x),
+                MathF.Mod(x.y, i.y),
+                MathF.Mod(x.z, i.z)                
+                );
         }
 
 
